@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf dist && tsc",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo"
   },
@@ -20,8 +20,10 @@
   },
   "dependencies": {
     "dotenv": "^17.2.2",
+    "express": "^5.1.0",
     "mysql2": "^3.14.5",
     "sequelize": "^6.37.7",
-    "sequelize-typescript": "^2.1.6"
+    "sequelize-typescript": "^2.1.6",
+    "yup": "^1.7.0"
   }
 }
