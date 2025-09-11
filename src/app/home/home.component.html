@@ -1,0 +1,81 @@
+<p-toast />
+<div class="justify-center items-center flex h-screen">
+  <div
+    class="w-[50vw] h-[90vh] bg-[#171717] flex flex-col justify-center gap-15 rounded-xl items-end p-5"
+  >
+    <div
+      *ngIf="!chatOpen"
+      class="w-[27vw] h-full flex flex-col justify-center gap-5"
+    >
+      <div class="flex justify-center">
+        <p class="text-xl text-white/80 font-bold">Selecione um chat</p>
+      </div>
+      <div class="flex justify-start gap-2">
+        <p-skeleton shape="circle" size="2rem" />
+        <p-skeleton width="10rem" height="3rem" />
+      </div>
+      <div class="flex justify-start items-end gap-2 flex-row-reverse">
+        <p-skeleton shape="circle" size="2rem" />
+        <p-skeleton width="10rem" height="3rem" />
+      </div>
+      <div class="flex justify-start gap-2">
+        <p-skeleton shape="circle" size="2rem" />
+        <p-skeleton width="10rem" height="3rem" />
+      </div>
+      <div class="flex justify-start gap-2">
+        <p-skeleton shape="circle" size="2rem" />
+        <p-skeleton width="10rem" height="3rem" />
+      </div>
+    </div>
+    <div *ngIf="chatOpen" class="w-[27vw] h-full">
+      <div class="flex justify-between items-center">
+        <p class="text-xl text-white/80 font-bold">Chat 1</p>
+        <button mat-icon-button (click)="chatOpen = false">
+          <lucide-angular
+            [img]="messageCircleX"
+            color="#1A6B68"
+            size="24"
+          ></lucide-angular>
+        </button>
+      </div>
+      <div class="h-[68vh] overflow-y-auto flex flex-col gap-2 py-2">
+        <app-message
+          *ngFor="let msg of messages"
+          [content]="msg.text"
+          [type]="msg.fromMe ? 'sent' : 'received'"
+        >
+        </app-message>
+      </div>
+      <div class="">
+        <app-message-input></app-message-input>
+      </div>
+    </div>
+  </div>
+  <div
+    class="w-[20vw] h-[90vh] bg-[#09201F] flex flex-col absolute items-center mr-[30vw] gap-5 rounded-xl p-5"
+  >
+    <p class="text-white font-bold">Chats</p>
+    <div class="flex flex-col gap-2">
+      <app-chat-card (click)="openChat()"></app-chat-card>
+      <app-chat-card></app-chat-card>
+      <app-chat-card></app-chat-card>
+    </div>
+    <div class="mt-auto w-full flex justify-end">
+      <button mat-icon-button (click)="openNewChat()">
+        <lucide-angular
+          [img]="messagePlus"
+          color="white"
+          size="24"
+        ></lucide-angular>
+      </button>
+    </div>
+  </div>
+  <div class="absolute top-5 right-5 flex gap-2 text-white cursor-pointer">
+    <button mat-icon-button (click)="openProfile()">
+      <lucide-angular [img]="userPen" color="white" size="24"></lucide-angular>
+    </button>
+    <button mat-icon-button (click)="logout()">
+      <lucide-angular [img]="logOut" color="red" size="24"></lucide-angular>
+    </button>
+  </div>
+</div>

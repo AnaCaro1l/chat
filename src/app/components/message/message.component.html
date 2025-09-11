@@ -1,0 +1,12 @@
+<div class="chat-message" [ngClass]="type">
+  <div class="avatar">
+    <lucide-angular [img]="user" color="#ffffff" size="32"></lucide-angular>
+  </div>
+  <div class="message-content">
+    {{ content }}
+    <div class="message-footer">
+      <span class="time">09:01</span>
+      <span class="status">✔️</span>
+    </div>
+  </div>
+</div>

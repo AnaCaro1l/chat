@@ -1,0 +1,83 @@
+<p-toast />
+<div class="justify-center items-center flex h-screen">
+  <div
+  [ngClass]="{ 'h-[70vh]': !isEditMode, 'h-[90vh]': isEditMode }"
+    class="w-[30vw] bg-[#171717] flex flex-col justify-center gap-15 rounded-lg p-8"
+  >
+    <div class="flex flex-col gap-5 items-center">
+      <h2 *ngIf="!isEditMode" class="text-4xl text-white font-bold">Cadastre-se</h2>
+      <h2 *ngIf="isEditMode" class="text-4xl text-white font-bold">Editar Perfil</h2>
+      <div class="flex flex-col gap-2 w-full">
+        <div *ngIf="!isEditMode" class="text-center text-lg font-medium text-white leading-tight">
+          Bem vindo!
+        </div>
+        <div *ngIf="!isEditMode" class="text-center">
+          <span class="text-white/80 text-sm">Já possui uma conta? </span>
+          <a
+            [routerLink]="'/login'"
+            class="text-white/80 cursor-pointer hover:text-white/90 underline"
+            >Faça login
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <form
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
+      class="flex flex-col gap-4"
+    >
+      <div class="flex gap-2 items-center">
+        <input
+          formControlName="email"
+          type="email"
+          placeholder="Email"
+          class="p-2 rounded-lg bg-[#222222] text-white w-full"
+        />
+        <lucide-angular [img]="mail" color="#1A6B68" size="24"></lucide-angular>
+      </div>
+      <div class="flex gap-2 items-center">
+        <input
+          formControlName="username"
+          type="text"
+          placeholder="Usuário"
+          class="p-2 rounded-lg bg-[#222222] text-white w-full"
+        />
+        <lucide-angular [img]="user" color="#1A6B68" size="24"></lucide-angular>
+      </div>
+      <div class="flex gap-2 items-center">
+        <input
+          formControlName="password"
+          [type]="viewPassword ? 'text' : 'password'"
+          placeholder="Senha"
+          class="p-2 rounded-lg bg-[#222222] text-white w-full"
+        />
+        <lucide-angular
+          [img]="viewPassword ? Eye : EyeOff"
+          color="#1A6B68"
+          size="24"
+          class="cursor-pointer"
+          (click)="togglePasswordVisibility()"
+        ></lucide-angular>
+      </div>
+      <div class="flex gap-2 items-center">
+        <input
+          formControlName="confirmPassword"
+          [type]="viewPasswordConfirm ? 'text' : 'password'"
+          placeholder="Confirme sua senha"
+          class="p-2 rounded-lg bg-[#222222] text-white w-full"
+        />
+        <lucide-angular
+          [img]="viewPasswordConfirm ? Eye : EyeOff"
+          color="#1A6B68"
+          size="24"
+          class="cursor-pointer"
+          (click)="togglePasswordConfirmVisibility()"
+        ></lucide-angular>
+      </div>
+      <button type="submit" class="bg-[#1A6B68] text-white p-2 rounded-lg">
+        {{ isEditMode ? 'Salvar' : 'Cadastrar' }}
+      </button>
+    </form>
+  </div>
+</div>
