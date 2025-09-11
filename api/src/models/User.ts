@@ -17,7 +17,7 @@ export class User extends Model<User> {
   @Column(DataType.STRING(40))
   email: string;
 
-  @Column
+  @Column(DataType.VIRTUAL)
   password: string;
 
   @Column
