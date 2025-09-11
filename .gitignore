@@ -8,6 +8,9 @@
 
 # Node
 /node_modules
+/api/node_modules
+/api/.env
+/api/dist
 npm-debug.log
 yarn-error.log
 
