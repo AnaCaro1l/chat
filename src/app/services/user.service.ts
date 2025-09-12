@@ -3,14 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export interface User {
-  id?: number;     
-  name: string;     
+  id?: number;
+  name: string;
   email: string;
   password: string;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
   private apiUrl = 'http://localhost:3333';
@@ -35,5 +35,9 @@ export class UserService {
 
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/user/${id}`);
+  }
+
+  login(email: string, password: string) {
+    return this.http.post<User>(`${this.apiUrl}/login`, { email, password });
   }
 }

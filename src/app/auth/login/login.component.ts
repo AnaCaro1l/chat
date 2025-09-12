@@ -11,6 +11,8 @@ import {
 } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { UserService } from '../../services/user.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -21,11 +23,12 @@ import { ToastModule } from 'primeng/toast';
     RouterLink,
     FormsModule,
     ReactiveFormsModule,
-    ToastModule
+    ToastModule,
+    HttpClientModule,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  providers: [MessageService]
+  providers: [MessageService, UserService],
 })
 export class LoginComponent {
   readonly Eye = Eye;
@@ -38,7 +41,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private userService: UserService
   ) {
     this.loginForm = this.fb.group({
       email: ['', Validators.required],
@@ -48,27 +52,31 @@ export class LoginComponent {
 
   onSubmit() {
     const { email, password } = this.loginForm.value;
-    const usersData = localStorage.getItem('users');
-    const users = usersData ? JSON.parse(usersData) : [];
 
-    const user = users.find(
-      (u: any) => u.email === email && u.password === password
-    );
+    this.userService.login(email, password).subscribe({
+      next: (user) => {
+        localStorage.setItem('auth', 'true');
+        localStorage.setItem('currentUser', JSON.stringify(user)); // user vem do backend com id
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: err.error.message || 'Usuário ou senha incorretos',
+          life: 3000,
+        });
+      },
+    });
+  }
 
-    if (user) {
-      localStorage.setItem('auth', 'true');
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      this.router.navigate(['/home']);
-    } else {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Erro',
-        detail: 'Usuário ou senha incorretos',
-        life: 3000
-      });
-    }
-
-    
+  showError(message: string) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: message,
+      life: 3000,
+    });
   }
 
   togglePasswordVisibility() {

@@ -1,17 +1,17 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { createUserService } from '../services/UserServices/createUserService';
 import { listUsersService } from '../services/UserServices/listUsersService';
 import { updateUserService } from '../services/UserServices/updateUserService';
 import { deleteUserService } from '../services/UserServices/deleteUserService';
 
-export const addUser = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
-
-  const newUser = await createUserService({ name, email, password });
-  return res.status(201).json({
-    message: 'Usuario criado com sucesso',
-    newUser,
-  });
+export const addUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { name, email, password } = req.body;
+    const user = await createUserService({ name, email, password });
+    return res.status(201).json(user);
+  } catch (err) {
+    next(err); 
+  }
 };
 
 export const listUsers = async (req: Request, res: Response) => {

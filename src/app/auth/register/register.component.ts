@@ -26,7 +26,7 @@ import { HttpClientModule } from '@angular/common/http';
     ReactiveFormsModule,
     NgIf,
     NgClass,
-    HttpClientModule
+    HttpClientModule,
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
@@ -71,7 +71,7 @@ export class RegisterComponent implements OnInit {
 
       this.registerForm.patchValue({
         email: user.email,
-        username: user.username,
+        username: user.name,
         password: user.password,
         confirmPassword: user.confirmPassword,
       });
@@ -98,23 +98,53 @@ export class RegisterComponent implements OnInit {
         password,
       };
 
-      this.userService.createUser(formData).subscribe({
-        next: (res) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: 'Cadastro realizado com sucesso',
-          });
-          this.router.navigate(['/login']);
-        },
-        error: (err) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: err.error.message || 'Erro ao cadastrar usuário',
-          });
-        },
-      });
+      console.log(this.isEditMode);
+
+      if (this.isEditMode && this.data?.user?.id) {
+        console.log('Perfil atualizado com sucesso');
+
+        this.userService.updateUser(this.data.user.id, formData).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Perfil atualizado com sucesso',
+            });
+            if (this.dialogRef) {
+              this.dialogRef.close(formData);
+            } else {
+              this.router.navigate(['/home']);
+            }
+          },
+          error: (err) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: err.error.message || 'Erro ao atualizar perfil',
+            });
+          },
+        });
+      } else {
+        console.log('Perfil atualizado com sucesso');
+
+        this.userService.createUser(formData).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Cadastro realizado com sucesso',
+            });
+            this.router.navigate(['/login']);
+          },
+          error: (err) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: err.error.message || 'Erro ao cadastrar usuário',
+            });
+          },
+        });
+      }
     } else {
       this.messageService.add({
         severity: 'error',
