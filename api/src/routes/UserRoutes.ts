@@ -1,14 +1,18 @@
 import { Router } from 'express';
 import { addUser, deleteUser, listUsers, updateUser } from '../controllers/UserController';
+import { login } from '../controllers/SessionController';
+import { isAuth } from '../middlewares/isAuth';
 
 const router = Router();
 
-router.post('/user', addUser);
+router.post('/user', isAuth, addUser);
 
-router.get('/users', listUsers);
+router.get('/users', isAuth, listUsers);
 
-router.put('/user/:id', updateUser);
+router.put('/user/:id', isAuth, updateUser);
 
-router.delete('/user/:id', deleteUser)
+router.delete('/user/:id', isAuth, deleteUser)
+
+router.post('/login', login)
 
 export default router;
