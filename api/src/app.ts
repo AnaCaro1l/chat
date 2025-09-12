@@ -1,9 +1,44 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
+import userRoutes from "./routes/UserRoutes";
+import { sequelize } from "./database";
+import { ValidationError } from "yup";
+import { AppError } from "./errors/AppError";
+//import "express-async-errors";
 
 const app = express();
 const port = 3333;
 
+app.use(express.json());
+app.use('/', userRoutes)
+// app.use((err: Error, req: Request, res: Response, _: NextFunction) => {
 
+//     if (err instanceof ValidationError) {
+//         return res.status(400).json({
+//             status: 'validation error',
+//             errors: err.errors
+//         });
+//     }
+
+//     if (err instanceof AppError) {
+//         return res.status(err.statusCode).json({
+//             status: 'error',
+//             message: err.message
+//         });
+//     }
+
+//     console.log(err);
+// })
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })
+
+async function syncDb() {
+    try {
+        await sequelize.authenticate();
+        console.log("Database connected")
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+syncDb();

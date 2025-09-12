@@ -6,7 +6,7 @@ import { Message } from "../models/Message";
 
 dotenv.config();
 
-const sequelize = new Sequelize({
+export const sequelize = new Sequelize({
     database: process.env.DB_NAME,
     dialect: "mysql",
     host: process.env.DB_HOST,
