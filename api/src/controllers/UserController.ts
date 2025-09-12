@@ -4,13 +4,19 @@ import { listUsersService } from '../services/UserServices/listUsersService';
 import { updateUserService } from '../services/UserServices/updateUserService';
 import { deleteUserService } from '../services/UserServices/deleteUserService';
 
-export const addUser = async (req: Request, res: Response, next: NextFunction) => {
+export const addUser = async (req: Request, res: Response) => {
+  const { name, email, password } = req.body;
   try {
-    const { name, email, password } = req.body;
-    const user = await createUserService({ name, email, password });
-    return res.status(201).json(user);
+    const newUser = await createUserService({ name, email, password });
+    return res.status(201).json({
+      message: 'Usuario criado com sucesso',
+      newUser,
+    });
   } catch (err) {
-    next(err); 
+    console.log(err);
+    return res.status(400).json({
+      message: err.message,
+    });
   }
 };
 
