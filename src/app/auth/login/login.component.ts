@@ -56,7 +56,7 @@ export class LoginComponent {
     this.userService.login(email, password).subscribe({
       next: (user) => {
         localStorage.setItem('auth', 'true');
-        localStorage.setItem('currentUser', JSON.stringify(user)); // user vem do backend com id
+        localStorage.setItem('currentUser', JSON.stringify(user));
         this.router.navigate(['/home']);
       },
       error: (err) => {

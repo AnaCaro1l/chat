@@ -63,93 +63,74 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const user = this.data?.user || history.state.user;
+    const user = this.data?.user;
 
     if (user) {
       this.isEditMode = true;
-      this.originalUsername = user.username;
+      this.originalUsername = user.name;
 
       this.registerForm.patchValue({
         email: user.email,
         username: user.name,
-        password: user.password,
-        confirmPassword: user.confirmPassword,
+        password: '',
+        confirmPassword: '',
       });
     }
   }
 
   onSubmit(): void {
-    if (this.registerForm.valid) {
-      const { email, username, password, confirmPassword } =
-        this.registerForm.value;
+    if (!this.registerForm.valid) return;
 
-      if (password !== confirmPassword) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro',
-          detail: 'As senhas não coincidem.',
-        });
-        return;
-      }
+    const { email, username, password, confirmPassword } =
+      this.registerForm.value;
 
-      const formData = {
-        name: username,
-        email,
-        password,
-      };
-
-      console.log(this.isEditMode);
-
-      if (this.isEditMode && this.data?.user?.id) {
-        console.log('Perfil atualizado com sucesso');
-
-        this.userService.updateUser(this.data.user.id, formData).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sucesso',
-              detail: 'Perfil atualizado com sucesso',
-            });
-            if (this.dialogRef) {
-              this.dialogRef.close(formData);
-            } else {
-              this.router.navigate(['/home']);
-            }
-          },
-          error: (err) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: err.error.message || 'Erro ao atualizar perfil',
-            });
-          },
-        });
-      } else {
-        console.log('Perfil atualizado com sucesso');
-
-        this.userService.createUser(formData).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sucesso',
-              detail: 'Cadastro realizado com sucesso',
-            });
-            this.router.navigate(['/login']);
-          },
-          error: (err) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: err.error.message || 'Erro ao cadastrar usuário',
-            });
-          },
-        });
-      }
-    } else {
+    if (password !== confirmPassword) {
       this.messageService.add({
         severity: 'error',
         summary: 'Erro',
-        detail: 'Por favor, preencha todos os campos corretamente.',
+        detail: 'Senhas não coincidem',
+      });
+      return;
+    }
+
+    const formData = { name: username, email, password };
+
+    if (this.isEditMode && this.data?.user?.id) {
+      this.userService.updateUser(this.data.user.id, formData).subscribe({
+        next: (user) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Perfil atualizado',
+          });
+          if (this.dialogRef) this.dialogRef.close(user);
+          else this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: err.error.message || 'Erro ao atualizar perfil',
+          });
+        },
+      });
+    } else {
+      this.userService.createUser(formData).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Cadastro realizado',
+          });
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: err.error.message || 'Erro ao cadastrar usuário',
+          });
+        },
       });
     }
   }

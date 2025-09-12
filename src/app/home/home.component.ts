@@ -82,17 +82,22 @@ export class HomeComponent implements OnInit {
 
   openProfile() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (!currentUser?.id) return;
 
-    this.userService.getUserById(currentUser.id).subscribe({
+    if (!currentUser.user?.id) {
+      console.error('Usuário não possui id');
+      return;
+    }
+
+    this.userService.showUser(currentUser.user.id).subscribe({
       next: (user) => {
         this.dialog.open(RegisterComponent, {
           height: '90vh',
-          data: { user }, 
+          data: { user },
         });
       },
       error: (err) => {
         console.error('Erro ao buscar usuário:', err);
+        console.log(currentUser.user.id);
       },
     });
   }
