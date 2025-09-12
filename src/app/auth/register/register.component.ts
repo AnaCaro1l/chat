@@ -12,6 +12,8 @@ import { Router, RouterLink } from '@angular/router';
 import { LucideAngularModule, Eye, EyeOff, User, Mail } from 'lucide-angular';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { UserService } from '../../services/user.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -24,10 +26,11 @@ import { ToastModule } from 'primeng/toast';
     ReactiveFormsModule,
     NgIf,
     NgClass,
+    HttpClientModule
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  providers: [MessageService],
+  providers: [MessageService, UserService],
 })
 export class RegisterComponent implements OnInit {
   readonly Eye = Eye;
@@ -47,6 +50,7 @@ export class RegisterComponent implements OnInit {
     private messageService: MessageService,
     private router: Router,
     private fb: FormBuilder,
+    private userService: UserService,
     @Optional() private dialogRef?: MatDialogRef<RegisterComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: any
   ) {
@@ -79,63 +83,38 @@ export class RegisterComponent implements OnInit {
       const { email, username, password, confirmPassword } =
         this.registerForm.value;
 
+      if (password !== confirmPassword) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'As senhas não coincidem.',
+        });
+        return;
+      }
+
       const formData = {
+        name: username,
         email,
-        username,
         password,
-        confirmPassword,
       };
 
-      const usersData = localStorage.getItem('users');
-      let users = usersData ? JSON.parse(usersData) : [];
-
-      if (this.isEditMode) {
-        const index = users.findIndex(
-          (u: any) => u.username === this.originalUsername
-        );
-        if (index !== -1) {
-          users[index] = formData;
-          localStorage.setItem('users', JSON.stringify(users));
-
-          localStorage.setItem('currentUser', JSON.stringify(formData));
-
+      this.userService.createUser(formData).subscribe({
+        next: (res) => {
           this.messageService.add({
             severity: 'success',
             summary: 'Sucesso',
-            detail: 'Usuário atualizado com sucesso',
+            detail: 'Cadastro realizado com sucesso',
           });
-          if (this.dialogRef) {
-            this.dialogRef.close();
-          } else {
-            this.router.navigate(['/home']); 
-          }
-        } else {
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
           this.messageService.add({
             severity: 'error',
             summary: 'Erro',
-            detail: 'Usuário não encontrado',
+            detail: err.error.message || 'Erro ao cadastrar usuário',
           });
-        }
-      } else {
-        const exists = users.find((u: any) => u.username === formData.username);
-        if (exists) {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Usuário já cadastrado',
-          });
-          return;
-        }
-
-        users.push(formData);
-        localStorage.setItem('users', JSON.stringify(users));
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Cadastro realizado com sucesso',
-        });
-        this.router.navigate(['/login']);
-      }
+        },
+      });
     } else {
       this.messageService.add({
         severity: 'error',
