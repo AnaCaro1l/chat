@@ -5,7 +5,7 @@ import { isAuth } from '../middlewares/isAuth';
 
 const router = Router();
 
-router.post('/user', isAuth, addUser);
+router.post('/user', addUser);
 
 router.get('/users', isAuth, listUsers);
 
