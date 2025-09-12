@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 
 interface Request {
   name?: string;
-  email: string;
+  email?: string;
   password?: string;
 }
 
@@ -14,9 +14,15 @@ export const updateUserService = async (
 ): Promise<User> => {
   const user = await User.findByPk(id);
 
-  const userExists = await User.findOne({
-    where: {email: email}
-  })
+  if (email) {
+    const emailExists = await User.findOne({
+      where: { email: email },
+    });
+
+    if (emailExists && email !== user.email) {
+      throw new AppError('Esse email já existe');
+    }
+  }
 
   if (!user) {
     throw new AppError('Usuário não encontrado');
@@ -32,14 +38,10 @@ export const updateUserService = async (
     }
   }
 
-  if (email !== user.email || userExists) {
-    throw new AppError('O email está incorreto');
-  }
-
   const updatedUser = await user.update({
-    name: name || user.name,
-    email: email || user.email,
-    passwordHash: password || user.passwordHash,
+    name: name ? name : user.name,
+    email: email ? email : user.email,
+    passwordHash: password ? password : user.passwordHash,
   });
 
   return updatedUser;
