@@ -14,6 +14,10 @@ export const updateUserService = async (
 ): Promise<User> => {
   const user = await User.findByPk(id);
 
+  const userExists = await User.findOne({
+    where: {email: email}
+  })
+
   if (!user) {
     throw new AppError('Usuário não encontrado');
   }
@@ -28,8 +32,8 @@ export const updateUserService = async (
     }
   }
 
-  if (email === user.email) {
-    throw new AppError('O novo email deve ser diferente do anterior');
+  if (email !== user.email || userExists) {
+    throw new AppError('O email está incorreto');
   }
 
   const updatedUser = await user.update({
