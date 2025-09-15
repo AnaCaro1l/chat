@@ -5,17 +5,27 @@ import { ChatSchema } from './schemas';
 
 interface Request {
   ownerId: number;
-  recipientId: number;
+  email: string;
 }
 
 export const updateChatService = async (
-  { ownerId, recipientId }: Request,
+  { ownerId, email }: Request,
   id
 ): Promise<Chat> => {
-  await ChatSchema.createChat.validate({ ownerId, recipientId });
+  await ChatSchema.createChat.validate({ ownerId, email });
   const chat = await Chat.findByPk(id);
-  const userExists = await User.findByPk(ownerId);
-  const recipientExists = await User.findByPk(recipientId);
+  const user = await User.findByPk(ownerId);
+
+  const recipient = await User.findOne({
+    where: { email: email },
+  });
+
+  if (!recipient) {
+    throw new AppError('Destinatário não encontrado');
+  }
+  
+  const recipientId = recipient.id;
+
   const chatExists = await Chat.findOne({
     where: { recipientId: recipientId },
   });
@@ -23,12 +33,8 @@ export const updateChatService = async (
     throw new AppError('Você não pode criar um chat com você mesmo');
   }
 
-  if (!userExists) {
+  if (!user) {
     throw new AppError('Remetente não encontrado');
-  }
-
-  if (!recipientExists) {
-    throw new AppError('Destinatário não encontrado');
   }
 
   if (chatExists) {
@@ -41,5 +47,5 @@ export const updateChatService = async (
     updatedAt: new Date(),
   });
 
-  return updatedChat
+  return updatedChat;
 };

@@ -5,30 +5,36 @@ import { ChatSchema } from './schemas';
 
 interface Request {
   ownerId: number;
-  recipientId: number;
+  email: string;
 }
 
 export const createChatService = async ({
   ownerId,
-  recipientId,
+  email,
 }: Request): Promise<Chat> => {
-  await ChatSchema.createChat.validate({ ownerId, recipientId });
+  await ChatSchema.createChat.validate({ ownerId, email });
 
-  const userExists = await User.findByPk(ownerId);
-  const recipientExists = await User.findByPk(recipientId);
+  const user = await User.findByPk(ownerId);
+
+  const recipient = await User.findOne({
+    where: { email: email },
+  });
+
+  const recipientId = recipient.id;
+
   const chatExists = await Chat.findOne({
     where: { recipientId: recipientId },
   });
 
-  if (ownerId === recipientId){
-    throw new AppError('Você não pode criar um chat com você mesmo')
+  if (ownerId === recipientId) {
+    throw new AppError('Você não pode criar um chat com você mesmo');
   }
 
-  if (!userExists) {
+  if (!user) {
     throw new AppError('Remetente não encontrado');
   }
 
-  if (!recipientExists) {
+  if (!recipient) {
     throw new AppError('Destinatário não encontrado');
   }
 

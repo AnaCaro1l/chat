@@ -7,9 +7,8 @@ import { deleteChatService } from '../services/ChatServices/deleteChatService';
 
 export const addChat = async (req: Request, res: Response) => {
   try {
-    const { ownerId, recipientId } = req.body;
-    console.log(ownerId, recipientId);
-    const chat = await createChatService({ ownerId, recipientId });
+    const { ownerId, email } = req.body;
+    const chat = await createChatService({ ownerId, email });
 
     return res.status(201).json({
       message: 'Chat criado com sucesso!',
@@ -56,10 +55,10 @@ export const showChat = async (req: Request, res: Response) => {
 
 export const updateChat = async (req: Request, res: Response) => {
   try {
-    const { ownerId, recipientId } = req.body;
+    const { ownerId, email } = req.body;
     const id = req.params.id;
 
-    const chat = await updateChatService({ ownerId, recipientId }, id);
+    const chat = await updateChatService({ ownerId, email }, id);
 
     return res.status(201).json({
       message: 'Chat atualizado com sucesso',
