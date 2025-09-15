@@ -15,7 +15,7 @@ router.post('/user', addUser);
 
 router.get('/users', isAuth, listUsers);
 
-router.get('/user/:id', isAuth, showUser);
+router.get('/user/:id', showUser);
 
 router.put('/user/:id', isAuth, updateUser);
 

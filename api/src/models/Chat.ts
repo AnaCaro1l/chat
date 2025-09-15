@@ -7,11 +7,11 @@ export class Chat extends Model<Chat> {
 
     @ForeignKey(() => User)
     @Column
-    ownerId: string;
+    ownerId: number;
 
     @ForeignKey(() => User)
     @Column
-    recipientId: string;
+    recipientId: number;
 
     @Column
     createdAt: Date;

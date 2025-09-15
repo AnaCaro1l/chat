@@ -42,6 +42,7 @@ export const updateUserService = async (
     name: name ? name : user.name,
     email: email ? email : user.email,
     passwordHash: password ? password : user.passwordHash,
+    updatedAt: new Date()
   });
 
   return updatedUser;
