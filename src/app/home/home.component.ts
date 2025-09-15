@@ -97,7 +97,6 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao buscar usuário:', err);
-        console.log(currentUser.user.id);
       },
     });
   }

@@ -70,8 +70,8 @@ export class RegisterComponent implements OnInit {
       this.originalUsername = user.name;
 
       this.registerForm.patchValue({
-        email: user.email,
-        username: user.name,
+        email: user.user.email,
+        username: user.user.name,
         password: '',
         confirmPassword: '',
       });
@@ -79,8 +79,6 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.registerForm.valid) return;
-
     const { email, username, password, confirmPassword } =
       this.registerForm.value;
 
@@ -95,8 +93,8 @@ export class RegisterComponent implements OnInit {
 
     const formData = { name: username, email, password };
 
-    if (this.isEditMode && this.data?.user?.id) {
-      this.userService.updateUser(this.data.user.id, formData).subscribe({
+    if (this.isEditMode) {
+      this.userService.updateUser(this.data.user.user.id, formData).subscribe({
         next: (user) => {
           this.messageService.add({
             severity: 'success',
@@ -112,9 +110,11 @@ export class RegisterComponent implements OnInit {
             summary: 'Erro',
             detail: err.error.message || 'Erro ao atualizar perfil',
           });
+          
         },
       });
     } else {
+      if (!this.registerForm.valid) return;
       this.userService.createUser(formData).subscribe({
         next: () => {
           this.messageService.add({
