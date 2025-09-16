@@ -1,29 +1,18 @@
 import { Op } from "sequelize"
-import { Chat } from "../../models/Chat"
 import { Message } from "../../models/Message"
+import { User } from "../../models/User"
 
 
-export const listMessagesService = async(messageId: string, id): Promise<Message[]> => {
-    const message = await Message.findByPk(messageId)
-    const chat = await Chat.findOne({
+export const listMessagesService = async(chatId, userId): Promise<Message[]> => {
+    const messages = await Message.findAll({
         where: {
-            [Op.or]: [
-                {ownerId: id},
-                {recipientId: id}
-            ]
+            chatId: chatId
         }
     })
 
-    if (chat.recipientId === id){
-        await message.update({
-            fromMe: false
-        })
+    for (const message of messages) {
+        message.fromMe = message.fromUser === userId
     }
 
-    const messages = await Message.findAll({
-        where: {chatId: chat.id}
-    })
-
-    return messages
-
+    return messages;
 }

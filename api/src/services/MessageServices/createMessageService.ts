@@ -7,9 +7,10 @@ import { Message } from "../../models/Message"
 interface Request {
     body: string;
     chatId: number;
+    userId: number;
 }
 
-export const createMessageService = async({body, chatId}: Request): Promise<Message> => {
+export const createMessageService = async({body, chatId, userId}: Request): Promise<Message> => {
     
     const chat = await Chat.findByPk(chatId)
 
@@ -20,12 +21,13 @@ export const createMessageService = async({body, chatId}: Request): Promise<Mess
     if(body === ""){
         throw new AppError('Digite algo para enviar')
     }
+    
     const message = await Message.create({
         body: body,
         chatId: chatId,
-        fromMe: true
+        fromUser: userId
     })
-    
-    io.emit('message', message.body)
+
+    io.emit('message', message)
     return message
 }

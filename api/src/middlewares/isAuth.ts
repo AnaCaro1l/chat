@@ -21,6 +21,12 @@ export const isAuth = (
 
   try {
     const decode = verify(token, 'secret');
+    const { id, name, email } = decode
+    req.user = {
+      id: +id,
+      name: name,
+      email: email
+    };
   } catch (err) {
     throw new AppError('Token inválido');
   }
