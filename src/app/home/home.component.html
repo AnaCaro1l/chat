@@ -10,26 +10,10 @@
       <div class="flex justify-center">
         <p class="text-xl text-white/80 font-bold">Selecione um chat</p>
       </div>
-      <div class="flex justify-start gap-2">
-        <p-skeleton shape="circle" size="2rem" />
-        <p-skeleton width="10rem" height="3rem" />
-      </div>
-      <div class="flex justify-start items-end gap-2 flex-row-reverse">
-        <p-skeleton shape="circle" size="2rem" />
-        <p-skeleton width="10rem" height="3rem" />
-      </div>
-      <div class="flex justify-start gap-2">
-        <p-skeleton shape="circle" size="2rem" />
-        <p-skeleton width="10rem" height="3rem" />
-      </div>
-      <div class="flex justify-start gap-2">
-        <p-skeleton shape="circle" size="2rem" />
-        <p-skeleton width="10rem" height="3rem" />
-      </div>
     </div>
     <div *ngIf="chatOpen" class="w-[27vw] h-full">
       <div class="flex justify-between items-center">
-        <p class="text-xl text-white/80 font-bold">Chat 1</p>
+        <p class="text-xl text-white/80 font-bold">{{ selectedChat?.chatName }}</p>
         <button mat-icon-button (click)="chatOpen = false">
           <lucide-angular
             [img]="messageCircleX"
@@ -55,10 +39,16 @@
     class="w-[20vw] h-[90vh] bg-[#09201F] flex flex-col absolute items-center mr-[30vw] gap-5 rounded-xl p-5"
   >
     <p class="text-white font-bold">Chats</p>
+    <div *ngIf="loadingChats" class="text-white">Carregando chats...</div>
     <div class="flex flex-col gap-2">
-      <app-chat-card (click)="openChat()"></app-chat-card>
-      <app-chat-card></app-chat-card>
-      <app-chat-card></app-chat-card>
+      <app-chat-card
+        *ngFor="let chat of chats"
+        [chatName]="chat.chatName"
+        [lastMessage]="chat.lastMessage"
+        [unreadCount]="chat.unreadCount"
+        (cardClick)="openChat($event)"
+        [chat]="chat"
+      ></app-chat-card>
     </div>
     <div class="mt-auto w-full flex justify-end">
       <button mat-icon-button (click)="openNewChat()">

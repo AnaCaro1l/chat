@@ -1,15 +1,20 @@
-<div class="bg-[#1A6B68] p-3 rounded-lg w-[425px] h-[90px] flex">
-  <textarea
-    class="w-full h-full bg-transparent border-none resize-none outline-none text-white"
-    placeholder="Digite sua mensagem..."
-  ></textarea>
-  <div class="flex justify-end mt-2 items-end">
-    <button mat-icon-button class="">
-      <lucide-angular
-        [img]="sendHorizontal"
-        color="white"
-        size="20"
-      ></lucide-angular>
-    </button>
-  </div>
+<div class="bg-[#1A6B68] p-3 rounded-lg h-[90px] flex">
+  <form [formGroup]="newMessageForm" class="w-full">
+    <div class="flex">
+      <textarea
+        class="w-full h-full bg-transparent border-none resize-none outline-none text-white"
+        placeholder="Digite sua mensagem..."
+        formControlName="message"
+      ></textarea>
+      <div class="flex justify-end mt-2 items-end">
+        <button (click)="sendMessage()" mat-icon-button class="">
+          <lucide-angular
+            [img]="sendHorizontal"
+            color="white"
+            size="20"
+          ></lucide-angular>
+        </button>
+      </div>
+    </div>
+  </form>
 </div>

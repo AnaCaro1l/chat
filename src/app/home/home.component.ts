@@ -21,6 +21,9 @@ import { RegisterComponent } from '../auth/register/register.component';
 import { NewChatComponent } from './new-chat/new-chat.component';
 import { UserService } from '../services/user.service';
 import { HttpClientModule } from '@angular/common/http';
+import { Chat, ChatsService } from '../services/chats.service';
+import { forkJoin, from, map, switchMap } from 'rxjs';
+import { ChatCardData } from '../models/chat-card-model';
 
 @Component({
   selector: 'app-home',
@@ -36,11 +39,11 @@ import { HttpClientModule } from '@angular/common/http';
     SkeletonModule,
     NgIf,
     HttpClientModule,
-  ],
+],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   standalone: true,
-  providers: [MessageService, UserService],
+  providers: [MessageService, UserService, ChatsService],
 })
 export class HomeComponent implements OnInit {
   readonly messageCircleX = MessageCircleX;
@@ -50,20 +53,75 @@ export class HomeComponent implements OnInit {
 
   chatOpen = false;
 
+  chats: ChatCardData[] = [];
+  loadingChats = true;
+
+  selectedChat: ChatCardData | null = null;
+
   constructor(
     private messageService: MessageService,
     private router: Router,
     private dialog: MatDialog,
-    private userService: UserService
+    private userService: UserService,
+    private chatsService: ChatsService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.loadChats();
+  }
 
   messages = [
     { text: 'Oi, tudo bem?', fromMe: false },
     { text: 'Tudo sim! E você?', fromMe: true },
     { text: 'Também, obrigado!', fromMe: false },
   ];
+
+  loadChats() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+
+    if (!currentUser.user?.id) {
+      console.error('Usuário não possui id');
+      return;
+    }
+
+    this.chatsService
+      .getChats(currentUser.user.id)
+      .pipe(
+        switchMap((response: any) => {
+          const chatsArray = response.chats;
+
+          const chatsWithNames$ = chatsArray.map((chat: Chat) => {
+            return this.userService.showUser(chat.recipientId).pipe(
+              map((user: any) => {
+                const lastMsg = chat.messages?.[chat.messages.length - 1];
+                return {
+                  id: chat.id,
+                  chatName: user?.user.name || 'Desconhecido',
+                  lastMessage: lastMsg
+                    ? lastMsg.text
+                    : 'Nenhuma mensagem ainda',
+                  unreadCount:
+                    chat.messages?.filter((msg: any) => !msg.read).length || 0,
+                  messages: chat.messages || [],
+                } as ChatCardData;
+              })
+            );
+          });
+
+          return forkJoin<ChatCardData[]>(chatsWithNames$);
+        })
+      )
+      .subscribe(
+        (chats: ChatCardData[]) => {
+          this.chats = chats;
+          this.loadingChats = false;
+        },
+        (err) => {
+          console.error('Erro ao carregar chats', err);
+          this.loadingChats = false;
+        }
+      );
+  }
 
   logout() {
     localStorage.setItem('auth', 'false');
@@ -76,8 +134,10 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  openChat() {
+  openChat(chat: ChatCardData) {
     this.chatOpen = true;
+    this.selectedChat = chat;
+    this.messages = chat.messages || [];
   }
 
   openProfile() {

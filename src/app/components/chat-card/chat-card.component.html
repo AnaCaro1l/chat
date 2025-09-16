@@ -1,14 +1,14 @@
 <div
   class="bg-[#1A6B68] w-[18vw] h-[10vh] rounded-lg p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-[#14736A]"
+  (click)="onClick()"
 >
   <div class="flex flex-col gap-1">
-
     <div class="flex justify-between items-center">
-      <p class="text-white font-bold">Chat 1</p>
+      <p class="text-white font-bold">{{ chatName }}</p>
     </div>
-    <p class="text-white text-sm">Última mensagem...</p>
+    <p class="text-white text-sm">{{ lastMessage }}</p>
   </div>
-  <div>
-    <p-badge value="8" badgeSize="large" severity="success" />
+  <div *ngIf="unreadCount > 0">
+    <p-badge [value]="unreadCount" badgeSize="large" severity="success"></p-badge>
   </div>
 </div>
