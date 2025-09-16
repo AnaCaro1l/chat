@@ -5,6 +5,7 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "socket": "ts-node src/testsocket.ts",
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo"
   },
@@ -27,6 +28,7 @@
     "mysql2": "^3.14.5",
     "sequelize": "^6.37.7",
     "sequelize-typescript": "^2.1.6",
+    "socket.io": "^4.8.1",
     "yup": "^1.7.0"
   }
 }

@@ -15,7 +15,7 @@ export class Message extends Model<Message> {
 
   @ForeignKey(() => Chat)
   @Column
-  chatId: string;
+  chatId: number;
 
   @Column
   fromMe: boolean;

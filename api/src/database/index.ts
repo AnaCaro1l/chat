@@ -13,5 +13,6 @@ export const sequelize = new Sequelize({
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
     port: 3306,
-    models: [User, Chat, Message]
+    models: [User, Chat, Message],
+    logging: false
 })
