@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ChatsService } from '../../services/chats.service';
-import { HttpClientModule } from '@angular/common/http';
 import { DialogRef } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'app-new-chat',
-  imports: [ReactiveFormsModule, HttpClientModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './new-chat.component.html',
   styleUrl: './new-chat.component.scss',
   providers: [ChatsService]

@@ -13,7 +13,6 @@ import { LucideAngularModule, Eye, EyeOff, User, Mail } from 'lucide-angular';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { UserService } from '../../services/user.service';
-import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -26,7 +25,6 @@ import { HttpClientModule } from '@angular/common/http';
     ReactiveFormsModule,
     NgIf,
     NgClass,
-    HttpClientModule,
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
