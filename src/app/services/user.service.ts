@@ -26,19 +26,11 @@ export class UserService {
   }
 
   showUser(id: number): Observable<User> {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const token = currentUser.token;
-    return this.http.get<User>(`${this.apiUrl}/user/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    return this.http.get<User>(`${this.apiUrl}/user/${id}`, {});
   }
 
   updateUser(id: number, user: User): Observable<User> {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const token = currentUser.token;
-    return this.http.put<User>(`${this.apiUrl}/user/${id}`, user, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    return this.http.put<User>(`${this.apiUrl}/user/${id}`, user, {});
   }
 
   deleteUser(id: number): Observable<void> {

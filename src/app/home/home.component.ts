@@ -20,7 +20,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { RegisterComponent } from '../auth/register/register.component';
 import { NewChatComponent } from './new-chat/new-chat.component';
 import { UserService } from '../services/user.service';
-import { HttpClientModule } from '@angular/common/http';
 import { Chat, ChatsService } from '../services/chats.service';
 import { forkJoin, from, map, switchMap } from 'rxjs';
 import { ChatCardData } from '../models/chat-card-model';
@@ -38,7 +37,6 @@ import { ChatCardData } from '../models/chat-card-model';
     MatIconButton,
     SkeletonModule,
     NgIf,
-    HttpClientModule,
 ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
