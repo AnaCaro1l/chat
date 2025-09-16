@@ -8,7 +8,7 @@ router.post('/chat', isAuth, addChat)
 
 router.get('/chat/:id', isAuth, showChat)
 
-router.get('/chats', isAuth, getChats)
+router.get('/chats/:id', isAuth, getChats)
 
 router.delete('/chat/:id', isAuth, deleteChat)
 

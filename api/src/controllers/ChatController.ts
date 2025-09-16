@@ -24,7 +24,8 @@ export const addChat = async (req: Request, res: Response) => {
 
 export const getChats = async (req: Request, res: Response) => {
   try {
-    const chats = await listChatsService();
+    const id = req.params.id
+    const chats = await listChatsService(id);
     return res.status(201).json({
       message: 'Chats listados com sucesso!',
       chats,

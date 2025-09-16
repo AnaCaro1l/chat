@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { AppError } from '../../errors/AppError';
 import { Chat } from '../../models/Chat';
 import { User } from '../../models/User';
@@ -21,9 +22,14 @@ export const createChatService = async ({
   });
 
   const recipientId = recipient.id;
-
+  console.log(recipientId)
   const chatExists = await Chat.findOne({
-    where: { recipientId: recipientId },
+    where: { 
+      [Op.and]: [
+        {recipientId: recipientId }, {ownerId: ownerId}
+      ]
+      
+    },
   });
 
   if (ownerId === recipientId) {
