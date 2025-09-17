@@ -6,11 +6,10 @@ export const createMessage = async (req: Request, res: Response) => {
   try {
     const { body, chatId } = req.body;
     const userId = req.user.id
-    const newMessage = await createMessageService({ body, chatId, userId });
+    const message = await createMessageService({ body, chatId, userId });
 
     return res.status(201).json({
-      message: 'Mensagem enviada',
-      newMessage,
+      message
     });
   } catch (err) {
     console.log(err);
