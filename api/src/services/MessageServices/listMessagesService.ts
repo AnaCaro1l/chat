@@ -11,8 +11,9 @@ export const listMessagesService = async(chatId, userId): Promise<Message[]> => 
     })
 
     for (const message of messages) {
-        message.dataValues.fromMe = message.fromUser === userId
+        message.setDataValue("fromMe", message.fromUser === userId)
     }
+
 
     return messages;
 }
