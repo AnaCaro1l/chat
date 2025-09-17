@@ -25,7 +25,7 @@ export const listMessages = async (req: Request, res: Response) => {
   try {
     const chatId  = req.params.id;
     const userId = req.user.id;
-    const messages = await listMessagesService(chatId, userId);
+    const messages = await listMessagesService({chatId, userId});
 
     return res.status(201).json({
       messages,

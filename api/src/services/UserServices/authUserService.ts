@@ -16,9 +16,13 @@ export const authUserService = async ({
     where: { email: email },
   });
 
+  if (!user) {
+    throw new AppError('Email ou senha incorretos');
+  }
+
   const checkPassword = await bcrypt.compare(password, user.passwordHash);
 
-  if (!user.email || !checkPassword) {
+  if (!checkPassword) {
     throw new AppError('Email ou senha incorretos');
   }
 
