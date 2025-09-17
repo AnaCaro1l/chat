@@ -33,7 +33,7 @@ export const createMessageService = async ({
     chatId: chatId,
     fromUser: userId,
   });
-  message.setDataValue("fromMe", false)
+  message.setDataValue("fromMe", true)
   io.emit('message', message);
   return message;
 };

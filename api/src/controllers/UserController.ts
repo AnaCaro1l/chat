@@ -31,10 +31,10 @@ export const listUsers = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id;
+    const id = req.user.id;
     const { name, email, password } = req.body;
 
-    const updatedUser = await updateUserService({ name, email, password }, id);
+    const updatedUser = await updateUserService({ name, email, password, id });
     return res.status(200).json({
       message: 'Usuário atualizado com sucesso',
       updatedUser,

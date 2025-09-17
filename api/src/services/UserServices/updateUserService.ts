@@ -6,11 +6,11 @@ interface Request {
   name?: string;
   email?: string;
   password?: string;
+  id: number;
 }
 
 export const updateUserService = async (
-  { name, email, password }: Request,
-  id
+  { name, email, password, id }: Request
 ): Promise<User> => {
   const user = await User.findByPk(id);
 
