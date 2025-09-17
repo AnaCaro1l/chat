@@ -23,7 +23,7 @@ export const createMessage = async (req: Request, res: Response) => {
 
 export const listMessages = async (req: Request, res: Response) => {
   try {
-    const { chatId } = req.body;
+    const chatId  = req.params.id;
     const userId = req.user.id;
     const messages = await listMessagesService(chatId, userId);
 

@@ -6,7 +6,7 @@ const router = Router()
 
 router.post('/message', isAuth,createMessage)
 
-router.get('/messages', isAuth, listMessages)
+router.get('/messages/:id', isAuth, listMessages)
 
 router.delete('/message/:id', isAuth, deleteMessage)
 
