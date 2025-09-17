@@ -23,24 +23,6 @@ app.use('/', userRoutes);
 app.use('/', chatRoutes);
 app.use('/', messageRoutes)
 
-app.use((err: Error, req: Request, res: Response, _: NextFunction) => {
-  if (err instanceof ValidationError) {
-    return res.status(400).json({
-      status: 'validation error',
-      errors: err.errors,
-    });
-  }
-
-  if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
-      status: 'error',
-      message: err.message,
-    });
-  }
-
-  console.log(err);
-});
-
 const server = http.createServer(app)
 const io = new Server(server, {
   cors: {
