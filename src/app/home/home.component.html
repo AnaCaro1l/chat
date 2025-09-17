@@ -24,14 +24,13 @@
       </div>
       <div class="h-[68vh] overflow-y-auto flex flex-col gap-2 py-2">
         <app-message
-          *ngFor="let msg of messages"
-          [content]="msg.text"
-          [type]="msg.fromMe ? 'sent' : 'received'"
+          *ngFor="let msg of messages; trackBy: trackById"
+          [content]="msg.body"
         >
         </app-message>
       </div>
       <div class="">
-        <app-message-input></app-message-input>
+        <app-message-input (messageSent)="sendMessage($event)"></app-message-input>
       </div>
     </div>
   </div>

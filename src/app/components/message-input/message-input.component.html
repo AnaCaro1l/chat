@@ -1,5 +1,5 @@
 <div class="bg-[#1A6B68] p-3 rounded-lg h-[90px] flex">
-  <form [formGroup]="newMessageForm" class="w-full">
+  <form [formGroup]="newMessageForm" (ngSubmit)="sendMessage()" class="w-full">
     <div class="flex">
       <textarea
         class="w-full h-full bg-transparent border-none resize-none outline-none text-white"
@@ -7,7 +7,7 @@
         formControlName="message"
       ></textarea>
       <div class="flex justify-end mt-2 items-end">
-        <button (click)="sendMessage()" mat-icon-button class="">
+        <button type="submit" mat-icon-button class="">
           <lucide-angular
             [img]="sendHorizontal"
             color="white"

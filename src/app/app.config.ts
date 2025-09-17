@@ -24,5 +24,3 @@ export const appConfig: ApplicationConfig = {
     MessageService
   ]
 };
-
-console.log([authInterceptor])

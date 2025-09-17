@@ -1,46 +1,42 @@
 import { Injectable } from '@angular/core';
 import { Chat } from './chats.service';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
 export interface Message {
   body: string;
   chatId: number;
-  fromMe: boolean;
   createdAt: Date;
   updatedAt?: Date;
-  chat: Chat
+  chat: Chat;
+  fromMe: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class SocketService {
+export class MessagesService {
   private apiUrl = 'http://localhost:3333';
-  private socket!: Socket
+  private socket: Socket;
+  private messageSubject = new Subject<Message>();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { 
+    this.socket = io(this.apiUrl);
 
-  connet(userId: number) {
-    this.socket = io(this.apiUrl, {
-      query: { userId }
-    });
+    this.socket.on('message', (msg) => {
+      console.log('Mensagem recebida via socket', msg)
+      this.messageSubject.next(msg);
+    })
   }
 
+
+  onMessage(): Observable<Message> {
+    return this.messageSubject.asObservable();
+  }
+   
   createMessage(body: string, chatId: number): Observable<Message> {
     return this.http.post<Message>(`${this.apiUrl}/message`, { body, chatId })
   }
 
-  // onMessage(): Observable<Message> {
-  //   return new Observable(observer => {
-  //     this.socket.on('message', (msg: Message) => {
-  //       observer.next(msg);
-  //     });
-  //   });
-  // }
-
-  disconnet() {
-    if (this.socket) this.socket.disconnect();
-  }
 }

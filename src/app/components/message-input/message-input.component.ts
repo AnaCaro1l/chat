@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { LucideAngularModule, MessageCircle, SendHorizontal } from "lucide-angular";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconButton } from '@angular/material/button';
@@ -9,13 +9,16 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   selector: 'app-message-input',
   imports: [LucideAngularModule, MatButtonModule, MatIconButton, ReactiveFormsModule],
   templateUrl: './message-input.component.html',
-  styleUrl: './message-input.component.scss'
+  styleUrl: './message-input.component.scss',
+  standalone: true,
 })
 export class MessageInputComponent {
   readonly messageCircle = MessageCircle;
   readonly sendHorizontal = SendHorizontal;
 
   newMessageForm: FormGroup;
+
+  @Output() messageSent = new EventEmitter<string>()
 
   constructor(private formBuilder: FormBuilder) {
     this.newMessageForm = this.formBuilder.group({
@@ -26,6 +29,9 @@ export class MessageInputComponent {
   sendMessage() {
     if (this.newMessageForm.valid) {
       const message = this.newMessageForm.value.message;
+
+      this.messageSent.emit(message);
+
       console.log('Mensagem enviada:', message);
       this.newMessageForm.reset();
     }

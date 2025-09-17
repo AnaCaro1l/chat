@@ -23,6 +23,7 @@ import { UserService } from '../services/user.service';
 import { Chat, ChatsService } from '../services/chats.service';
 import { forkJoin, from, map, switchMap } from 'rxjs';
 import { ChatCardData } from '../models/chat-card-model';
+import { Message, MessagesService } from '../services/messages.service';
 
 @Component({
   selector: 'app-home',
@@ -37,7 +38,7 @@ import { ChatCardData } from '../models/chat-card-model';
     MatIconButton,
     SkeletonModule,
     NgIf,
-],
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   standalone: true,
@@ -61,18 +62,22 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private userService: UserService,
-    private chatsService: ChatsService
+    private chatsService: ChatsService,
+    private messagesService: MessagesService
   ) {}
 
   ngOnInit(): void {
     this.loadChats();
+
+    this.messagesService.onMessage().subscribe((msg: Message) => {
+      if (this.selectedChat && msg.chatId === this.selectedChat.id) {
+        this.messages.push(msg);
+        console.log(msg.fromMe)
+      }
+    });
   }
 
-  messages = [
-    { text: 'Oi, tudo bem?', fromMe: false },
-    { text: 'Tudo sim! E você?', fromMe: true },
-    { text: 'Também, obrigado!', fromMe: false },
-  ];
+  messages: Message[] = [];
 
   loadChats() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -96,7 +101,7 @@ export class HomeComponent implements OnInit {
                   id: chat.id,
                   chatName: user?.user.name || 'Desconhecido',
                   lastMessage: lastMsg
-                    ? lastMsg.text
+                    ? lastMsg.body
                     : 'Nenhuma mensagem ainda',
                   unreadCount:
                     chat.messages?.filter((msg: any) => !msg.read).length || 0,
@@ -164,5 +169,15 @@ export class HomeComponent implements OnInit {
       height: '40vh',
       width: '20vw',
     });
+  }
+
+  sendMessage(body: string) {
+    if (!this.selectedChat) return;
+
+    this.messagesService.createMessage(body, this.selectedChat.id).subscribe();
+  }
+
+  trackById(index: number, msg: Message) {
+    return msg.createdAt;
   }
 }
