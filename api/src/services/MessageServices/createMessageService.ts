@@ -11,7 +11,6 @@ interface Request {
 }
 
 export const createMessageService = async({body, chatId, userId}: Request): Promise<Message> => {
-    
     const chat = await Chat.findByPk(chatId)
 
     if(!chat){
@@ -21,12 +20,18 @@ export const createMessageService = async({body, chatId, userId}: Request): Prom
     if(body === ""){
         throw new AppError('Digite algo para enviar')
     }
-    
+    await chat.update({
+        lastMessage: body
+    })
+
     const message = await Message.create({
         body: body,
         chatId: chatId,
         fromUser: userId
     })
+    console.log(message.body)
+    console.log(message.chatId)
+    console.log(message.fromUser)
 
     io.emit('message', message)
     return message

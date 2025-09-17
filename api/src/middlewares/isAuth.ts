@@ -14,7 +14,6 @@ export const isAuth = (
   }
 
   const [, token] = authHeader.split(' ');
-
   if (!token) {
     throw new AppError('Token inválido');
   }
@@ -23,7 +22,7 @@ export const isAuth = (
     const decode = verify(token, 'secret');
     const { id, name, email } = decode
     req.user = {
-      id: +id,
+      id: id,
       name: name,
       email: email
     };

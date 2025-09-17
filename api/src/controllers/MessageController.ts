@@ -4,7 +4,8 @@ import { listMessagesService } from '../services/MessageServices/listMessagesSer
 
 export const createMessage = async (req: Request, res: Response) => {
   try {
-    const { body, chatId, userId } = req.body;
+    const { body, chatId } = req.body;
+    const userId = req.user.id
     const newMessage = await createMessageService({ body, chatId, userId });
 
     return res.status(201).json({

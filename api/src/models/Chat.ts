@@ -14,6 +14,9 @@ export class Chat extends Model<Chat> {
     recipientId: number;
 
     @Column
+    lastMessage: string
+
+    @Column
     createdAt: Date;
 
     @Column

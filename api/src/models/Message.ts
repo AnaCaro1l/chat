@@ -17,11 +17,11 @@ export class Message extends Model<Message> {
   @Column
   chatId: number;
 
-  @Column(DataType.VIRTUAL)
+  @Column
   fromUser: number;
 
-  @Column
-  fromMe: boolean
+  @Column(DataType.VIRTUAL)
+  fromMe: boolean;
 
   @Column
   createdAt: Date;
