@@ -17,7 +17,7 @@ router.get('/users', isAuth, listUsers);
 
 router.get('/user/:id', showUser);
 
-router.put('/user/', isAuth, updateUser);
+router.put('/user', isAuth, updateUser);
 
 router.delete('/user/:id', isAuth, deleteUser);
 
