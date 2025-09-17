@@ -72,7 +72,6 @@ export class HomeComponent implements OnInit {
     this.messagesService.onMessage().subscribe((msg: Message) => {
       if (this.selectedChat && msg.chatId === this.selectedChat.id) {
         this.messages.push(msg);
-        console.log(msg.fromMe)
       }
     });
   }
@@ -140,7 +139,17 @@ export class HomeComponent implements OnInit {
   openChat(chat: ChatCardData) {
     this.chatOpen = true;
     this.selectedChat = chat;
-    this.messages = chat.messages || [];
+    this.messages = [];
+
+    this.messagesService.listMessages(chat.id).subscribe({
+      next: (res: any) => {
+        this.messages = res.messages.sort(
+          (a: Message, b: Message) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      },
+      error: (err) => console.error('Erro ao carregar mensagens do chat', err),
+    });
   }
 
   openProfile() {

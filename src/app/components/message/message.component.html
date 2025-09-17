@@ -3,10 +3,15 @@
     <lucide-angular [img]="user" color="#ffffff" size="32"></lucide-angular>
   </div>
   <div class="message-content">
-    {{ content }}
-    <div class="message-footer">
-      <span class="time">09:01</span>
-      <span class="status">✔️</span>
+    <div>
+      {{ content }}
+      <div class="message-footer">
+        <span class="time">{{ time | date : "HH:mm" }}</span>
+        <span class="status">✔️</span>
+      </div>
+    </div>
+    <div>
+      
     </div>
   </div>
 </div>

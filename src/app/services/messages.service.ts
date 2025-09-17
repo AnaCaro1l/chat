@@ -14,29 +14,31 @@ export interface Message {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MessagesService {
   private apiUrl = 'http://localhost:3333';
   private socket: Socket;
   private messageSubject = new Subject<Message>();
 
-  constructor(private http: HttpClient) { 
+  constructor(private http: HttpClient) {
     this.socket = io(this.apiUrl);
 
     this.socket.on('message', (msg) => {
-      console.log('Mensagem recebida via socket', msg)
+      console.log('Mensagem recebida via socket', msg);
       this.messageSubject.next(msg);
-    })
+    });
   }
-
 
   onMessage(): Observable<Message> {
     return this.messageSubject.asObservable();
   }
-   
+
   createMessage(body: string, chatId: number): Observable<Message> {
-    return this.http.post<Message>(`${this.apiUrl}/message`, { body, chatId })
+    return this.http.post<Message>(`${this.apiUrl}/message`, { body, chatId });
   }
 
+  listMessages(chatId: number): Observable<Message[]> {
+    return this.http.get<Message[]>(`${this.apiUrl}/messages/${chatId}`);
+  }
 }

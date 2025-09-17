@@ -26,11 +26,11 @@ export class UserService {
   }
 
   showUser(id: number): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/user/${id}`, {});
+    return this.http.get<User>(`${this.apiUrl}/user/${id}`);
   }
 
   updateUser(id: number, user: User): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/user/${id}`, user, {});
+    return this.http.put<User>(`${this.apiUrl}/user/${id}`, user);
   }
 
   deleteUser(id: number): Observable<void> {

@@ -25,7 +25,7 @@
       <div class="h-[68vh] overflow-y-auto flex flex-col gap-2 py-2">
         <app-message
           *ngFor="let msg of messages; trackBy: trackById"
-          [content]="msg.body"
+          [message]="msg"
         >
         </app-message>
       </div>
