@@ -12,7 +12,11 @@ import { Server } from 'socket.io'
 const app = express();
 const port = 3333;
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:4200",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json());
 
 app.use('/', userRoutes);
@@ -38,7 +42,12 @@ app.use((err: Error, req: Request, res: Response, _: NextFunction) => {
 });
 
 const server = http.createServer(app)
-const io = new Server(server)
+const io = new Server(server, {
+  cors: {
+  origin: "http://localhost:4200",
+  methods: ["GET", "POST", "PUT", "DELETE"]
+}
+})
 
 io.on('connection', (socket) => {
   console.log('Um usuário conectou')
