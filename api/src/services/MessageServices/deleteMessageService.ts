@@ -14,11 +14,16 @@ export const deleteMessageService = async (id): Promise<void> => {
 
   await message.destroy();
 
-  if (chat.lastMessage === message.body) {
+  if (chat.lastMessage === message.body || chat.lastMessage === message.body.substring(0, 25) + '...') {
     const lastMessage = await Message.findOne({
       where: { chatId: chat.id },
       order: [['createdAt', 'DESC']],
     });
+
+    if (lastMessage.body.length > 25) {
+      lastMessage.body = lastMessage.body.substring(0, 25) + '...';
+    }
+
     await chat.update({
       lastMessage: lastMessage ? lastMessage.body : '',
     });

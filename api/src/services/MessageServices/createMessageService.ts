@@ -24,8 +24,9 @@ export const createMessageService = async ({
   if (body === '') {
     throw new AppError('Digite algo para enviar');
   }
+
   await chat.update({
-    lastMessage: body,
+    lastMessage: body.length > 25 ? body.substring(0, 25) + '...' : body,
   });
 
   const message = await Message.create({
@@ -33,7 +34,8 @@ export const createMessageService = async ({
     chatId: chatId,
     fromUser: userId,
   });
-  message.setDataValue("fromMe", true)
+
+  message.setDataValue('fromMe', true);
   io.emit('message', message);
   return message;
 };
