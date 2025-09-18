@@ -9,6 +9,7 @@ export interface Chat {
   createdAt?: Date;
   updatedAt?: Date;
   messages?: any[];
+  lastMessage?: string;
 }
 
 @Injectable({
