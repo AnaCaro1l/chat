@@ -9,6 +9,7 @@ import {
   UserPen,
   MessageCirclePlus,
   MessageCircleX,
+  Menu
 } from 'lucide-angular';
 import { ChatCardComponent } from '../components/chat-card/chat-card.component';
 import { MessageComponent } from '../components/message/message.component';
@@ -24,6 +25,7 @@ import { Chat, ChatsService } from '../services/chats.service';
 import { forkJoin, from, map, switchMap } from 'rxjs';
 import { ChatCardData } from '../models/chat-card-model';
 import { Message, MessagesService } from '../services/messages.service';
+import { io, Socket } from 'socket.io-client';
 
 @Component({
   selector: 'app-home',
@@ -49,8 +51,12 @@ export class HomeComponent implements OnInit {
   readonly logOut = LogOut;
   readonly userPen = UserPen;
   readonly messagePlus = MessageCirclePlus;
+  readonly menu = Menu;
+
+  private socket: Socket;
 
   chatOpen = false;
+  menuOpen = false;
 
   chats: ChatCardData[] = [];
   loadingChats = true;
@@ -63,8 +69,11 @@ export class HomeComponent implements OnInit {
     private dialog: MatDialog,
     private userService: UserService,
     private chatsService: ChatsService,
-    private messagesService: MessagesService
-  ) {}
+    private messagesService: MessagesService,
+
+  ) {
+    this.socket = io('http://localhost:3333');
+  }
 
   ngOnInit(): void {
     this.loadChats();
@@ -74,6 +83,8 @@ export class HomeComponent implements OnInit {
         this.messages.push(msg);
       }
     });
+
+    this.socket.emit('join_chat', this.selectedChat?.id)
   }
 
   messages: Message[] = [];
@@ -95,13 +106,10 @@ export class HomeComponent implements OnInit {
           const chatsWithNames$ = chatsArray.map((chat: Chat) => {
             return this.userService.showUser(chat.recipientId).pipe(
               map((user: any) => {
-                const lastMsg = chat.messages?.[chat.messages.length - 1];
                 return {
                   id: chat.id,
                   chatName: user?.user.name || 'Desconhecido',
-                  lastMessage: lastMsg
-                    ? lastMsg.body
-                    : 'Nenhuma mensagem ainda',
+                  lastMessage: chat.lastMessage || 'Nenhuma mensagem ainda',
                   unreadCount:
                     chat.messages?.filter((msg: any) => !msg.read).length || 0,
                   messages: chat.messages || [],
@@ -140,6 +148,8 @@ export class HomeComponent implements OnInit {
     this.chatOpen = true;
     this.selectedChat = chat;
     this.messages = [];
+    
+    this.socket.emit('join_chat', )
 
     this.messagesService.listMessages(chat.id).subscribe({
       next: (res: any) => {
@@ -188,5 +198,16 @@ export class HomeComponent implements OnInit {
 
   trackById(index: number, msg: Message) {
     return msg.createdAt;
+  }
+
+  updateMessage(event: { id: number; body: string }) {
+    const index = this.messages.findIndex((m) => m.id === event.id);
+    if (index > -1) {
+      this.messages[index] = { ...this.messages[index], body: event.body };
+    }
+  }
+
+  deleteMessage(id: number) {
+    this.messages = this.messages.filter((m) => m.id !== id);
   }
 }
