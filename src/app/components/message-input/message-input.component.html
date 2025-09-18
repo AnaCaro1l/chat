@@ -2,6 +2,7 @@
   <form [formGroup]="newMessageForm" (ngSubmit)="sendMessage()" class="w-full">
     <div class="flex">
       <textarea
+        (keydown.enter)="sendMessageOnEnter($any($event))"
         class="w-full h-full bg-transparent border-none resize-none outline-none text-white"
         placeholder="Digite sua mensagem..."
         formControlName="message"
