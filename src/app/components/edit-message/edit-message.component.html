@@ -1,0 +1,15 @@
+<div class="p-5 gap-2 w-full">
+  <form [formGroup]="editForm">
+    <textarea
+      class="w-full h-full bg-[#1A6B68] rounded-lg p-3 resize-none outline-none text-white"
+      formControlName="message"
+      rows="3"
+      placeholder="Edite sua mensagem..."
+    ></textarea>
+
+    <div class="justify-end w-full flex gap-2">
+      <button mat-button (click)="cancel()">Cancelar</button>
+      <button mat-flat-button color="primary" (click)="save()">Salvar</button>
+    </div>
+  </form>
+</div>

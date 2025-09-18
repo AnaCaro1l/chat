@@ -7,7 +7,7 @@
     flex-direction: row-reverse;
 
     .message-content {
-      background-color: #1A6B68;
+      background-color: #1a6b68;
       color: white;
       border-radius: 16px 16px 0 16px;
     }
@@ -44,7 +44,7 @@
 
     // opcional: seta do balão
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       width: 0;
       height: 0;
@@ -74,6 +74,19 @@
 
     .time {
       margin-right: 4px;
+    }
+  }
+
+  .can-view {
+    opacity: 0;
+    transform: translateX(-10px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    &.visible {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
     }
   }
 }

@@ -1,17 +1,25 @@
-<div class="chat-message" [ngClass]="type">
-  <div class="avatar">
-    <lucide-angular [img]="user" color="#ffffff" size="32"></lucide-angular>
+<div class="chat-message gap-1 items-center" [ngClass]="type">
+  <div class="avatar items-center flex justify-center">
+    <lucide-angular [img]="user" color="#ffffff" size="24"></lucide-angular>
   </div>
   <div class="message-content">
-    <div>
-      {{ content }}
-      <div class="message-footer">
-        <span class="time">{{ time | date : "HH:mm" }}</span>
-        <span class="status">✔️</span>
-      </div>
+    {{ content }}
+    <div class="message-footer">
+      <span class="time">{{ time | date : "HH:mm" }}</span>
+      <span class="status">✔️</span>
     </div>
-    <div>
-      
-    </div>
+  </div>
+  <div class="bg-[#09201F] rounded-2xl p-1" (click)="this.canView = !this.canView">
+    <lucide-angular [img]="plus" color="#ffffff" size="18"></lucide-angular>
+  </div>
+  <div class="bg-[#09201F] rounded-2xl p-1 can-view" (click)="editMessage()" [class.visible]="canView">
+    <lucide-angular
+      [img]="pencilLine"
+      color="#ffffff"
+      size="18"
+    ></lucide-angular>
+  </div>
+  <div class="bg-[#09201F] rounded-2xl p-1 can-view" (click)="deleteMessage()" [class.visible]="canView">
+    <lucide-angular [img]="trash" color="#ffffff" size="18"></lucide-angular>
   </div>
 </div>
