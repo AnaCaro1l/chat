@@ -92,7 +92,7 @@ export class RegisterComponent implements OnInit {
     const formData = { name: username, email, password };
 
     if (this.isEditMode) {
-      this.userService.updateUser(this.data.user.user.id, formData).subscribe({
+      this.userService.updateUser(formData).subscribe({
         next: (user) => {
           this.messageService.add({
             severity: 'success',
