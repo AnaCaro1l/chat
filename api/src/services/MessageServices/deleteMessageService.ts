@@ -1,3 +1,4 @@
+import io from '../../app';
 import { AppError } from '../../errors/AppError';
 import { Chat } from '../../models/Chat';
 import { Message } from '../../models/Message';
@@ -14,7 +15,10 @@ export const deleteMessageService = async (id): Promise<void> => {
 
   await message.destroy();
 
-  if (chat.lastMessage === message.body || chat.lastMessage === message.body.substring(0, 25) + '...') {
+  if (
+    chat.lastMessage === message.body ||
+    chat.lastMessage === message.body.substring(0, 25) + '...'
+  ) {
     const lastMessage = await Message.findOne({
       where: { chatId: chat.id },
       order: [['createdAt', 'DESC']],
@@ -28,4 +32,6 @@ export const deleteMessageService = async (id): Promise<void> => {
       lastMessage: lastMessage ? lastMessage.body : '',
     });
   }
+
+  io.to(`chat_${chat.id}`).emit('last_message', chat.lastMessage);
 };

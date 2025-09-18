@@ -1,3 +1,4 @@
+import io from '../../app';
 import { AppError } from '../../errors/AppError';
 import { Chat } from '../../models/Chat';
 import { Message } from '../../models/Message';
@@ -22,15 +23,21 @@ export const updateMessageService = async ({
     throw new AppError('Mensagem não encontrada');
   }
 
-  if(message.fromUser !== userId) {
+  if (message.fromUser !== userId) {
     throw new AppError('Você só pode editar suas próprias mensagens');
   }
 
-  if ((chat.lastMessage === message.body || chat.lastMessage === message.body.substring(0, 25) + '...') && message.fromUser === userId) {
+  if (
+    (chat.lastMessage === message.body ||
+      chat.lastMessage === message.body.substring(0, 25) + '...') &&
+    message.fromUser === userId
+  ) {
     await chat.update({
       lastMessage: body.length > 25 ? body.substring(0, 25) + '...' : body,
     });
   }
+
+  io.to(`chat_${chat.id}`).emit('last_message', chat.lastMessage);
 
   const updatedMessage = await message.update({
     body: body ? body : message.body,
