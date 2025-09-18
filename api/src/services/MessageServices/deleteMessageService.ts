@@ -33,5 +33,9 @@ export const deleteMessageService = async (id): Promise<void> => {
     });
   }
 
-  io.to(`chat_${chat.id}`).emit('last_message', chat.lastMessage);
+  io.to(`chat_${chat.id}`).emit('last_message', {
+    chatId: chat.id,
+    body: chat.lastMessage,
+  });
+  
 };

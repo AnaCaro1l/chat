@@ -37,7 +37,11 @@ export const updateMessageService = async ({
     });
   }
 
-  io.to(`chat_${chat.id}`).emit('last_message', chat.lastMessage);
+  io.to(`chat_${chat.id}`).emit('last_message', {
+    chatId: chat.id,
+    body: chat.lastMessage,
+  });
+  
 
   const updatedMessage = await message.update({
     body: body ? body : message.body,
