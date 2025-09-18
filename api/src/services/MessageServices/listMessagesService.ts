@@ -18,5 +18,11 @@ export const listMessagesService = async ({
     message.setDataValue('fromMe', message.fromUser === userId);
   }
 
+  messages.sort(
+    (a, b) =>
+      (new Date(a.createdAt).getTime() ?? 0) -
+      (new Date(b.createdAt).getTime() ?? 0)
+  );
+
   return messages;
 };
