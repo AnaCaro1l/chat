@@ -36,6 +36,7 @@ export const createMessageService = async ({
   });
 
   message.setDataValue('fromMe', true);
-  io.emit('message', message);
+
+  io.to(`chat_${chatId}`).emit('message', message);
   return message;
 };
