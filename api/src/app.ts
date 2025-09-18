@@ -2,41 +2,47 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import userRoutes from './routes/UserRoutes';
 import chatRoutes from './routes/ChatRoutes';
-import messageRoutes from './routes/MessageRoutes'
+import messageRoutes from './routes/MessageRoutes';
 import { sequelize } from './database';
 import { ValidationError } from 'yup';
 import { AppError } from './errors/AppError';
-import http from 'http'
-import { Server } from 'socket.io'
+import http from 'http';
+import { Server } from 'socket.io';
 
 const app = express();
 const port = 3333;
 
-app.use(cors({
-  origin: "http://localhost:4200",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use('/', userRoutes);
 app.use('/', chatRoutes);
-app.use('/', messageRoutes)
+app.use('/', messageRoutes);
 
-const server = http.createServer(app)
+const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-  origin: "http://localhost:4200",
-  methods: ["GET", "POST", "PUT", "DELETE"]
-}
-})
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  },
+});
 
 io.on('connection', (socket) => {
-  console.log('Um usuário conectou')
-})
+  console.log('Um usuário conectou');
 
+  socket.on('join_chat', (chatId: number) => {
+    socket.join(`chat_${chatId}`);
+    console.log(`Socket ${socket.id} entrou na sala chat_${chatId}`);
+  });
+});
 
-server.listen(port, () => console.log(`Server is running on port ${port}`))
+server.listen(port, () => console.log(`Server is running on port ${port}`));
 
 async function syncDb() {
   try {
@@ -48,4 +54,4 @@ async function syncDb() {
 }
 
 syncDb();
-export default io
+export default io;

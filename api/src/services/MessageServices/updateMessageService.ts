@@ -26,9 +26,9 @@ export const updateMessageService = async ({
     throw new AppError('Você só pode editar suas próprias mensagens');
   }
 
-  if (chat.lastMessage === message.body && message.fromUser === userId) {
+  if ((chat.lastMessage === message.body || chat.lastMessage === message.body.substring(0, 25) + '...') && message.fromUser === userId) {
     await chat.update({
-      lastMessage: body,
+      lastMessage: body.length > 25 ? body.substring(0, 25) + '...' : body,
     });
   }
 
