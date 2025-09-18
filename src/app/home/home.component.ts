@@ -25,7 +25,6 @@ import { Chat, ChatsService } from '../services/chats.service';
 import { forkJoin, from, map, switchMap } from 'rxjs';
 import { ChatCardData } from '../models/chat-card-model';
 import { Message, MessagesService } from '../services/messages.service';
-import { io, Socket } from 'socket.io-client';
 
 @Component({
   selector: 'app-home',
@@ -53,10 +52,8 @@ export class HomeComponent implements OnInit {
   readonly messagePlus = MessageCirclePlus;
   readonly menu = Menu;
 
-  private socket: Socket;
-
   chatOpen = false;
-  menuOpen = false;
+  menuOpen = true;
 
   chats: ChatCardData[] = [];
   loadingChats = true;
@@ -71,9 +68,7 @@ export class HomeComponent implements OnInit {
     private chatsService: ChatsService,
     private messagesService: MessagesService,
 
-  ) {
-    this.socket = io('http://localhost:3333');
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadChats();
@@ -84,7 +79,6 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    this.socket.emit('join_chat', this.selectedChat?.id)
   }
 
   messages: Message[] = [];
@@ -145,12 +139,12 @@ export class HomeComponent implements OnInit {
   }
 
   openChat(chat: ChatCardData) {
+    this.router.navigate(['home/chat', chat.id])
     this.chatOpen = true;
-    this.selectedChat = chat;
     this.messages = [];
-    
-    this.socket.emit('join_chat', )
 
+    this.messagesService.joinChat(chat.id)
+    
     this.messagesService.listMessages(chat.id).subscribe({
       next: (res: any) => {
         this.messages = res.messages.sort(

@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
 export interface Message {
+  id: number;
   body: string;
   chatId: number;
   createdAt: Date;
@@ -30,6 +31,10 @@ export class MessagesService {
     });
   }
 
+  joinChat(chatId: number){
+    this.socket.emit('join_chat', chatId)
+  }
+
   onMessage(): Observable<Message> {
     return this.messageSubject.asObservable();
   }
@@ -40,5 +45,13 @@ export class MessagesService {
 
   listMessages(chatId: number): Observable<Message[]> {
     return this.http.get<Message[]>(`${this.apiUrl}/messages/${chatId}`);
+  }
+
+  updateMessage(id: number, body: string): Observable<Message> {
+    return this.http.put<Message>(`${this.apiUrl}/message`, { id, body });
+  }
+
+  deleteMessage(id: number): Observable<Message> {
+    return this.http.delete<Message>(`${this.apiUrl}/message/${id}`);
   }
 }
