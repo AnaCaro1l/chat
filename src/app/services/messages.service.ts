@@ -60,7 +60,7 @@ export class MessagesService {
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
 
-    return this.http.get<Message[]>(`${this.apiUrl}/${chatId}`, { params });
+    return this.http.get<Message[]>(`${this.apiUrl}/messages/${chatId}`, { params });
   }
 
   updateMessage(id: number, body: string): Observable<Message> {
