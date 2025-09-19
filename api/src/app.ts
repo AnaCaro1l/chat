@@ -40,6 +40,11 @@ io.on('connection', (socket) => {
     socket.join(`chat_${chatId}`);
     console.log(`Socket ${socket.id} entrou na sala chat_${chatId}`);
   });
+
+  socket.on('leave_chat', (chatId: number) => {
+    socket.leave(`chat_${chatId}`);
+    console.log(`Socket ${socket.id} saiu da sala chat_${chatId}`);
+  })
 });
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));
