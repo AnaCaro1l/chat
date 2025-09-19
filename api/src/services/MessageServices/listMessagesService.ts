@@ -19,12 +19,14 @@ export const listMessagesService = async ({
     },
     order: [['createdAt', 'DESC']],
     limit: pageSize,
-    offset,
+    offset: offset,
   });
 
   for (const message of messages) {
     message.setDataValue('fromMe', message.fromUser === userId);
   }
+
+  messages.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
   return messages;
 };

@@ -25,6 +25,27 @@ app.use('/', userRoutes);
 app.use('/', chatRoutes);
 app.use('/', messageRoutes);
 
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof ValidationError) {
+    return res.status(400).json({
+      message: err.errors,
+    });
+  }
+
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json({
+      message: err.message,
+    });
+  }
+
+  // fallback pra erros não tratados
+  console.error(err);
+  return res.status(500).json({
+    message: 'Internal server error',
+  });
+});
+
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {

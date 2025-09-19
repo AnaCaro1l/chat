@@ -23,13 +23,15 @@ export const createMessage = async (req: Request, res: Response) => {
 
 export const listMessages = async (req: Request, res: Response) => {
   try {
-    const { chatId, page, pageSize } = req.params;
+    const chatId = req.params.id;
+    const page = req.query.page
+    const pageSize = req.query.pageSize;
     const userId = req.user.id;
     const messages = await listMessagesService({
       chatId,
       userId,
-      page: Number(page),
-      pageSize: Number(pageSize)
+      page: page ? Number(page) : 0,
+      pageSize: pageSize ? Number(pageSize) : 20
     });
 
     return res.status(201).json({
