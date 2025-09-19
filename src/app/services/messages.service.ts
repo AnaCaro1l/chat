@@ -14,6 +14,11 @@ export interface Message {
   fromMe: boolean;
 }
 
+interface LastMessagePayload {
+  chatId: number;
+  body: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -21,18 +26,25 @@ export class MessagesService {
   private apiUrl = 'http://localhost:3333';
   private socket: Socket;
   private messageSubject = new Subject<Message>();
+  private lastMessageSubject = new Subject<LastMessagePayload>();
 
   constructor(private http: HttpClient) {
     this.socket = io(this.apiUrl);
 
-    this.socket.on('message', (msg) => {
-      console.log('Mensagem recebida via socket', msg);
-      this.messageSubject.next(msg);
-    });
+    this.socket.on('message', (msg) => this.messageSubject.next(msg));
+    this.socket.on('last_message', (payload:  LastMessagePayload) => this.lastMessageSubject.next(payload));
   }
 
-  joinChat(chatId: number){
-    this.socket.emit('join_chat', chatId)
+  onLastMessage(): Observable<LastMessagePayload> {
+    return this.lastMessageSubject.asObservable()
+  }
+
+  joinChat(chatId: number) {
+    this.socket.emit('join_chat', chatId);
+  }
+
+  leaveChat(chatId: number) {
+    this.socket.emit('leave_chat', chatId);
   }
 
   onMessage(): Observable<Message> {

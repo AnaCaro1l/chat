@@ -45,7 +45,6 @@ export class MessageInputComponent {
 
       this.messageSent.emit(message);
 
-      console.log('Mensagem enviada:', message);
       this.newMessageForm.reset();
     }
   }

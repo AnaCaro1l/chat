@@ -1,20 +1,56 @@
 <p-toast />
-<div class="justify-center items-center flex h-screen">
-  <div
-    class="w-[50vw] h-[90vh] bg-[#171717] flex flex-col justify-center gap-15 rounded-xl items-end p-5"
-  >
+<div class="justify-center items-center flex h-screen relative">
+  <div class="bg-[#171717] rounded-lg h-[90vh] flex w-full md:w-auto">
     <div
-      *ngIf="!chatOpen"
-      class="w-[27vw] h-full flex flex-col justify-center gap-5"
+      *ngIf="!chatOpen || !isMobile"
+      class="h-full md:w-[20vw] w-full bg-[#09201F] flex flex-col rounded-xl p-5"
     >
-      <div class="flex justify-center">
-        <p class="text-xl text-white/80 font-bold">Selecione um chat</p>
+      <div class="flex justify-between items-center w-full mb-4">
+        <p class="text-white font-bold">Chats</p>
+        <div *ngIf="isMobile" class="flex gap-2">
+          <button mat-icon-button (click)="openProfile()">
+            <lucide-angular [img]="userPen" color="white" size="24"></lucide-angular>
+          </button>
+          <button mat-icon-button (click)="logout()">
+            <lucide-angular [img]="logOut" color="red" size="24"></lucide-angular>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="loadingChats" class="text-white">Carregando chats...</div>
+      <div class="flex flex-col gap-2 w-full overflow-y-auto">
+        <app-chat-card
+          *ngFor="let chat of chats"
+          [chatName]="chat.chatName"
+          [lastMessage]="chat.lastMessage"
+          [unreadCount]="chat.unreadCount"
+          (cardClick)="openChat(chat)"
+          [chat]="chat"
+        ></app-chat-card>
+      </div>
+
+      <div class="mt-auto w-full flex justify-between">
+        <button mat-icon-button (click)="openNewChat()">
+          <lucide-angular [img]="messagePlus" color="white" size="24"></lucide-angular>
+        </button>
       </div>
     </div>
-    <div *ngIf="chatOpen" class="w-[27vw] h-full">
+    <div *ngIf="!chatOpen && !isMobile" class=" md:w-[40vw] text-white text-center items-center justify-center flex h-full">
+      Abra um chat pra iniciar a conversa
+    </div>
+
+    <div
+      *ngIf="chatOpen"
+      class="w-full md:w-[40vw] bg-[#171717] p-5 gap-2 rounded-lg flex flex-col justify-center h-full"
+    > 
       <div class="flex justify-between items-center">
-        <p class="text-xl text-white/80 font-bold">{{ selectedChat?.chatName }}</p>
-        <button mat-icon-button (click)="chatOpen = false">
+        <button *ngIf="isMobile" mat-icon-button (click)="closeChat()">
+          <lucide-angular [img]="menu" color="white" size="24"></lucide-angular>
+        </button>
+        <p class="text-xl text-white/80 font-bold flex-1 text-center">
+          {{ selectedChat?.chatName }}
+        </p>
+        <button mat-icon-button (click)="closeChat()">
           <lucide-angular
             [img]="messageCircleX"
             color="#1A6B68"
@@ -22,49 +58,34 @@
           ></lucide-angular>
         </button>
       </div>
-      <div class="h-[68vh] overflow-y-auto flex flex-col gap-2 py-2">
+
+      <div
+        class="h-full overflow-y-auto flex flex-col gap-2 py-2"
+        #messagesConteiner
+      >
         <app-message
           *ngFor="let msg of messages; trackBy: trackById"
           [message]="msg"
-        >
-        </app-message>
+          (messageEdited)="updateMessage($event)"
+          (messageDeleted)="deleteMessage($event)"
+        ></app-message>
       </div>
-      <div class="">
+
+      <div>
         <app-message-input (messageSent)="sendMessage($event)"></app-message-input>
       </div>
     </div>
   </div>
+
   <div
-    class="w-[20vw] h-[90vh] bg-[#09201F] flex flex-col absolute items-center mr-[30vw] gap-5 rounded-xl p-5"
+    *ngIf="!isMobile"
+    class="absolute top-5 right-5 flex flex-col gap-2 text-white cursor-pointer"
   >
-    <p class="text-white font-bold">Chats</p>
-    <div *ngIf="loadingChats" class="text-white">Carregando chats...</div>
-    <div class="flex flex-col gap-2">
-      <app-chat-card
-        *ngFor="let chat of chats"
-        [chatName]="chat.chatName"
-        [lastMessage]="chat.lastMessage"
-        [unreadCount]="chat.unreadCount"
-        (cardClick)="openChat($event)"
-        [chat]="chat"
-      ></app-chat-card>
-    </div>
-    <div class="mt-auto w-full flex justify-end">
-      <button mat-icon-button (click)="openNewChat()">
-        <lucide-angular
-          [img]="messagePlus"
-          color="white"
-          size="24"
-        ></lucide-angular>
-      </button>
-    </div>
-  </div>
-  <div class="absolute top-5 right-5 flex gap-2 text-white cursor-pointer">
-    <button mat-icon-button (click)="openProfile()">
-      <lucide-angular [img]="userPen" color="white" size="24"></lucide-angular>
-    </button>
     <button mat-icon-button (click)="logout()">
       <lucide-angular [img]="logOut" color="red" size="24"></lucide-angular>
+    </button>
+    <button mat-icon-button (click)="openProfile()">
+      <lucide-angular [img]="userPen" color="white" size="24"></lucide-angular>
     </button>
   </div>
 </div>

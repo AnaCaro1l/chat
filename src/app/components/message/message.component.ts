@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   LucideAngularModule,
@@ -15,7 +15,7 @@ import { EditMessageComponent } from '../edit-message/edit-message.component';
 
 @Component({
   selector: 'app-message',
-  imports: [LucideAngularModule, NgClass, DatePipe, MatDialogModule],
+  imports: [LucideAngularModule, NgClass, DatePipe, MatDialogModule, NgIf],
   templateUrl: './message.component.html',
   styleUrl: './message.component.scss',
 })
