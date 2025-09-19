@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Chat } from './chats.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
@@ -55,8 +55,12 @@ export class MessagesService {
     return this.http.post<Message>(`${this.apiUrl}/message`, { body, chatId });
   }
 
-  listMessages(chatId: number): Observable<Message[]> {
-    return this.http.get<Message[]>(`${this.apiUrl}/messages/${chatId}`);
+  listMessages(chatId: number, page: number = 0, pageSize: number = 20): Observable<Message[]> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<Message[]>(`${this.apiUrl}/${chatId}`, { params });
   }
 
   updateMessage(id: number, body: string): Observable<Message> {

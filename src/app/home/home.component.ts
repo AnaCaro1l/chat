@@ -76,7 +76,7 @@ export class HomeComponent implements OnInit {
     private dialog: MatDialog,
     private userService: UserService,
     private chatsService: ChatsService,
-    private messagesService: MessagesService,
+    private messagesService: MessagesService
   ) {}
 
   ngOnInit(): void {
@@ -116,6 +116,52 @@ export class HomeComponent implements OnInit {
   }
 
   messages: Message[] = [];
+  loadingMore = false;
+  page = 0;
+  pageSize = 20;
+  allLoaded = false;
+
+  ngAfterViewInit() {
+    this.loadMessages();
+  }
+
+  onScroll() {
+    const el = this.messagesContainer.nativeElement;
+
+    if (el.scrollHeight - el.scrollTop === el.clientHeight) {
+      this.loadMessages();
+    }
+  }
+
+  private loadMessages() {
+    if (!this.selectedChat) return;
+
+    this.loadingMore = true;
+
+    this.messagesService
+      .listMessages(this.selectedChat.id, this.page, this.pageSize)
+      .subscribe({
+        next: (res: any) => {
+          if (res.messages.length < this.pageSize) this.allLoaded = true;
+
+          const el = this.messagesContainer.nativeElement;
+          const oldHeight = el.scrollHeight;
+
+          this.messages = [...res.messages, ...this.messages];
+
+          setTimeout(() => {
+            const newHeight = el.scrollHeight;
+            el.scrollTop = newHeight - oldHeight;
+          }, 0);
+
+          this.page++;
+          this.loadingMore = false;
+        },
+        error: () => {
+          this.loadingMore = false;
+        },
+      });
+  }
 
   loadChats() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -177,15 +223,21 @@ export class HomeComponent implements OnInit {
   }
 
   openChat(chat: ChatCardData) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!currentUser.user?.id) {
+      console.error('Usuário não possui id');
+      return;
+    }
     if (this.selectedChat && this.selectedChat.id !== chat.id) {
       this.messagesService.leaveChat(this.selectedChat.id);
     }
     this.selectedChat = chat;
-    this.router.navigate([`chat/${chat.id}`]);
     this.chatOpen = true;
     this.messages = [];
 
     this.messagesService.joinChat(chat.id);
+
+    history.replaceState(null, '', `/home/chat/${chat.id}`);
 
     this.messagesService.listMessages(chat.id).subscribe({
       next: (res: any) => {
@@ -247,7 +299,7 @@ export class HomeComponent implements OnInit {
 
   trackById(index: number, msg: Message) {
     return msg.createdAt;
-  } 
+  }
 
   updateMessage(event: { id: number; body: string }) {
     const index = this.messages.findIndex((m) => m.id === event.id);
