@@ -23,9 +23,14 @@ export const createMessage = async (req: Request, res: Response) => {
 
 export const listMessages = async (req: Request, res: Response) => {
   try {
-    const chatId  = req.params.id;
+    const { chatId, page, pageSize } = req.params;
     const userId = req.user.id;
-    const messages = await listMessagesService({chatId, userId});
+    const messages = await listMessagesService({
+      chatId,
+      userId,
+      page: Number(page),
+      pageSize: Number(pageSize)
+    });
 
     return res.status(201).json({
       messages,
