@@ -96,7 +96,9 @@ export class HomeComponent implements OnInit {
 
       if (this.selectedChat?.id === msg.chatId) {
         this.messages.push(msg);
-        this.shouldScroll = true;
+        setTimeout(() => {
+          this.shouldScroll = true;
+        });
       }
     });
 
@@ -173,9 +175,12 @@ export class HomeComponent implements OnInit {
   }
 
   private loadMessages() {
-    if (!this.selectedChat) return;
+    if (!this.selectedChat || this.loadingMore || this.allLoaded) return;
 
     this.loadingMore = true;
+
+    const el = this.messagesContainer.nativeElement;
+    const oldScrollHeight = el.scrollHeight;
 
     this.messagesService
       .listMessages(this.selectedChat.id, this.page, this.pageSize)
@@ -185,21 +190,18 @@ export class HomeComponent implements OnInit {
             this.allLoaded = true;
           }
 
-          const el = this.messagesContainer.nativeElement;
-          const oldScrollHeight = el.scrollHeight;
-
           const newMessages = res.messages;
 
-          console.log('newMessages', newMessages);
           this.messages = [...newMessages, ...this.messages];
 
           this.page++;
           this.loadingMore = false;
 
           setTimeout(() => {
-            const newScrollHeight = el.scrollHeight;
-            const scrollDifference = newScrollHeight - oldScrollHeight;
-            el.scrollTop = scrollDifference;
+            requestAnimationFrame(() => {
+              const newScrollHeight = el.scrollHeight;
+              el.scrollTop = newScrollHeight - oldScrollHeight;
+            });
           });
         },
         error: () => {
@@ -373,8 +375,8 @@ export class HomeComponent implements OnInit {
 
   private scrollToBottom() {
     if (this.messagesContainer) {
-      this.messagesContainer.nativeElement.scrollTop =
-        this.messagesContainer.nativeElement.scrollHeight;
+      const el = this.messagesContainer.nativeElement;
+      el.scrollTop = el.scrollHeight;
     }
   }
 }
