@@ -9,7 +9,5 @@ export const showChatService = async (id): Promise<Chat> => {
     throw new AppError('Chat não encontrado');
   }
 
-  io.to(`chat_${chat.id}`).emit('show_new_chat', chat);
-
   return chat;
 };

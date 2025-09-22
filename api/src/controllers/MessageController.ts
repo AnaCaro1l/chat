@@ -5,73 +5,45 @@ import { deleteMessageService } from '../services/MessageServices/deleteMessageS
 import { updateMessageService } from '../services/MessageServices/updateMessageService';
 
 export const createMessage = async (req: Request, res: Response) => {
-  try {
-    const { body, chatId } = req.body;
-    const userId = req.user.id;
-    const message = await createMessageService({ body, chatId, userId });
+  const { body, chatId } = req.body;
+  const userId = req.user.id;
+  const message = await createMessageService({ body, chatId, userId });
 
-    return res.status(201).json({
-      message,
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(400).json({
-      message: err.message,
-    });
-  }
+  return res.status(201).json({
+    message,
+  });
 };
 
 export const listMessages = async (req: Request, res: Response) => {
-  try {
-    const chatId = req.params.id;
-    const page = req.query.page
-    const pageSize = req.query.pageSize;
-    const userId = req.user.id;
-    const messages = await listMessagesService({
-      chatId,
-      userId,
-      page: page ? Number(page) : 0,
-      pageSize: pageSize ? Number(pageSize) : 20
-    });
+  const chatId = req.params.id;
+  const page = req.query.page;
+  const pageSize = req.query.pageSize;
+  const userId = req.user.id;
+  const messages = await listMessagesService({
+    chatId,
+    userId,
+    page: page ? Number(page) : 0,
+    pageSize: pageSize ? Number(pageSize) : 20,
+  });
 
-    return res.status(201).json({
-      messages,
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(400).json({
-      message: err.message,
-    });
-  }
+  return res.status(200).json({
+    messages,
+  });
 };
 
 export const updateMessage = async (req: Request, res: Response) => {
-  try {
-    const { id, body } = req.body;
-    const userId = req.user.id;
-    const updatedMessage = await updateMessageService({ id, body, userId });
-    return res.status(200).json({
-      updatedMessage,
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(400).json({
-      message: err.message,
-    });
-  }
+  const { id, body } = req.body;
+  const userId = req.user.id;
+  const updatedMessage = await updateMessageService({ id, body, userId });
+  return res.status(200).json({
+    updatedMessage,
+  });
 };
 
 export const deleteMessage = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id;
-    await deleteMessageService(id);
-    return res.status(201).json({
-      message: 'Mensagem deletada com sucesso',
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(400).json({
-      message: err.message,
-    });
-  }
+  const id = req.params.id;
+  await deleteMessageService(id);
+  return res.status(204).json({
+    message: 'Mensagem deletada com sucesso',
+  });
 };

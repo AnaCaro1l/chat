@@ -26,7 +26,7 @@ export const listMessagesService = async ({
     message.setDataValue('fromMe', message.fromUser === userId);
   }
 
-  messages.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+  messages.reverse()
 
   return messages;
 };

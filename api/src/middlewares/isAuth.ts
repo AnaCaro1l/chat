@@ -10,16 +10,16 @@ export const isAuth = (
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    throw new AppError('Sessão expirada');
+    throw new AppError('Sessão expirada', 401);
   }
 
   const [, token] = authHeader.split(' ');
   if (!token) {
-    throw new AppError('Token inválido');
+    throw new AppError('Token inválido', 401);
   }
 
   try {
-    const decode = verify(token, 'secret');
+    const decode = verify(token, process.env.JWT_SECRET);
     const { id, name, email } = decode
     req.user = {
       id: id,

@@ -10,6 +10,7 @@ interface Request {
 }
 
 export const createUserService = async ({ name, email, password }: Request): Promise<User> => {
+    
     await UserSchema.createUser.validate({ name, email, password });
     
     const userExists = await User.findOne({

@@ -32,7 +32,7 @@ export const authUserService = async ({
       name: user.name,
       email: user.email,
     },
-    'secret',
+    process.env.JWT_SECRET,
     {
       expiresIn: '1d',
     }
