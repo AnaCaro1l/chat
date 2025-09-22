@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addChat, deleteChat, getChats, showChat, updateChat } from "../controllers/ChatController";
+import { addChat, deleteChat, getChats, showChat } from "../controllers/ChatController";
 import { isAuth } from "../middlewares/isAuth";
 
 const router = Router()
@@ -12,6 +12,5 @@ router.get('/chats/:id', isAuth, getChats)
 
 router.delete('/chat/:id', isAuth, deleteChat)
 
-router.put('/chat/:id', isAuth, updateChat)
 
 export default router
