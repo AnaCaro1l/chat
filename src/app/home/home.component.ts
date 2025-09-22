@@ -15,6 +15,7 @@ import {
   MessageCirclePlus,
   MessageCircleX,
   Menu,
+  PencilLine
 } from 'lucide-angular';
 import { ChatCardComponent } from '../components/chat-card/chat-card.component';
 import { MessageComponent } from '../components/message/message.component';
@@ -56,6 +57,7 @@ export class HomeComponent implements OnInit {
   readonly userPen = UserPen;
   readonly messagePlus = MessageCirclePlus;
   readonly menu = Menu;
+  readonly pencilLine = PencilLine;
 
   chatOpen = false;
   menuOpen = true;
@@ -90,22 +92,28 @@ export class HomeComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((showNewChat) => this.addOrUpdateChat(showNewChat));
 
-    this.messagesService.onMessage().subscribe((msg) => {
-      const chat = this.chats.find((c) => c.id === msg.chatId);
-      if (chat) chat.lastMessage = msg.body;
+    this.messagesService
+      .onMessage()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((msg) => {
+        const chat = this.chats.find((c) => c.id === msg.chatId);
+        if (chat) chat.lastMessage = msg.body;
 
-      if (this.selectedChat?.id === msg.chatId) {
-        this.messages.push(msg);
-        setTimeout(() => {
-          this.shouldScroll = true;
-        });
-      }
-    });
+        if (this.selectedChat?.id === msg.chatId) {
+          this.messages.push(msg);
+          setTimeout(() => {
+            this.shouldScroll = true;
+          });
+        }
+      });
 
-    this.messagesService.onLastMessage().subscribe(({ chatId, body }) => {
-      const chat = this.chats.find((c) => c.id === chatId);
-      if (chat) chat.lastMessage = body;
-    });
+    this.messagesService
+      .onLastMessage()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ chatId, body }) => {
+        const chat = this.chats.find((c) => c.id === chatId);
+        if (chat) chat.lastMessage = body;
+      });
   }
 
   addOrUpdateChat(chat: Chat) {
@@ -127,7 +135,7 @@ export class HomeComponent implements OnInit {
       if (index > -1) {
         this.chats[index] = chatData;
       } else {
-        this.chats.unshift(chatData);
+        this.chats.push(chatData);
       }
     };
 
@@ -277,15 +285,15 @@ export class HomeComponent implements OnInit {
       return;
     }
     if (this.selectedChat && this.selectedChat.id !== chat.id) {
-      this.chatsService.leaveChat(this.selectedChat.id);
+      this.messagesService.leaveChat(this.selectedChat.id);
     }
     this.selectedChat = chat;
+    this.messagesService.joinChat(chat.id);
+
     this.chatOpen = true;
     this.messages = [];
     this.page = 0;
     this.allLoaded = false;
-
-    this.chatsService.joinChat(chat.id);
 
     history.replaceState(null, '', `/home/chat/${chat.id}`);
 
@@ -376,5 +384,10 @@ export class HomeComponent implements OnInit {
       const el = this.messagesContainer.nativeElement;
       el.scrollTop = el.scrollHeight;
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

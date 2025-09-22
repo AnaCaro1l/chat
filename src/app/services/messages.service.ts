@@ -31,28 +31,46 @@ export class MessagesService {
   constructor(private http: HttpClient) {
     this.socket = io(this.apiUrl);
 
-    this.socket.on('message', (msg) => this.messageSubject.next(msg));
-    this.socket.on('last_message', (payload:  LastMessagePayload) => this.lastMessageSubject.next(payload));
+    this.socket.on('message', (msg) => {
+      this.messageSubject.next(msg);
+    });
+    this.socket.on('last_message', (payload: LastMessagePayload) =>
+      this.lastMessageSubject.next(payload)
+    );
   }
 
   onLastMessage(): Observable<LastMessagePayload> {
-    return this.lastMessageSubject.asObservable()
+    return this.lastMessageSubject.asObservable();
   }
 
   onMessage(): Observable<Message> {
     return this.messageSubject.asObservable();
   }
 
+  joinChat(chatId: number) {
+    this.socket.emit('join_chat', chatId);
+  }
+
+  leaveChat(chatId: number) {
+    this.socket.emit('leave_chat', chatId);
+  }
+
   createMessage(body: string, chatId: number): Observable<Message> {
     return this.http.post<Message>(`${this.apiUrl}/message`, { body, chatId });
   }
 
-  listMessages(chatId: number, page: number = 0, pageSize: number = 20): Observable<Message[]> {
+  listMessages(
+    chatId: number,
+    page: number = 0,
+    pageSize: number = 20
+  ): Observable<Message[]> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
 
-    return this.http.get<Message[]>(`${this.apiUrl}/messages/${chatId}`, { params });
+    return this.http.get<Message[]>(`${this.apiUrl}/messages/${chatId}`, {
+      params,
+    });
   }
 
   updateMessage(id: number, body: string): Observable<Message> {

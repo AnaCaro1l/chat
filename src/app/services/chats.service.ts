@@ -30,7 +30,6 @@ export class ChatsService {
     }
 
     this.socket.on('show_new_chat', (showNewChat: Chat) => {
-      console.log('show_new_chat', showNewChat);
       this.showNewChat.next(showNewChat);
     });
   }
