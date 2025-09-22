@@ -325,9 +325,7 @@ export class HomeComponent implements OnInit {
         };
 
         if (this.isMobile) {
-          dialogConfig.width = '100%';
-        } else {
-          dialogConfig.width = '40vw';
+          dialogConfig.height = '80vh';
         }
 
         this.dialog.open(RegisterComponent, dialogConfig);

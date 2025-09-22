@@ -1,5 +1,5 @@
 import { NgClass, NgIf } from '@angular/common';
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { Component, HostListener, Inject, OnInit, Optional } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -44,6 +44,8 @@ export class RegisterComponent implements OnInit {
   isEditMode = false;
   originalUsername: string = '';
 
+  isMobile = false;
+
   constructor(
     private messageService: MessageService,
     private router: Router,
@@ -61,6 +63,8 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.checkScreenSize();
+
     const user = this.data?.user;
 
     if (user) {
@@ -73,6 +77,19 @@ export class RegisterComponent implements OnInit {
         password: '',
         confirmPassword: '',
       });
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize() {
+    if (window.innerWidth < 790) {
+      this.isMobile = true;
+    } else {
+      this.isMobile = false;
     }
   }
 
@@ -108,7 +125,6 @@ export class RegisterComponent implements OnInit {
             summary: 'Erro',
             detail: err.error.message || 'Erro ao atualizar perfil',
           });
-          
         },
       });
     } else {
