@@ -37,8 +37,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
       message: err.message,
     });
   }
-
-  // fallback pra erros não tratados
+  
   console.error(err);
   return res.status(500).json({
     message: 'Internal server error',
