@@ -39,14 +39,6 @@ export class MessagesService {
     return this.lastMessageSubject.asObservable()
   }
 
-  joinChat(chatId: number) {
-    this.socket.emit('join_chat', chatId);
-  }
-
-  leaveChat(chatId: number) {
-    this.socket.emit('leave_chat', chatId);
-  }
-
   onMessage(): Observable<Message> {
     return this.messageSubject.asObservable();
   }

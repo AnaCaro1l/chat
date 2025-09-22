@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
 import { LucideAngularModule, Eye, EyeOff, User } from 'lucide-angular';
@@ -12,6 +12,7 @@ import {
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { UserService } from '../../services/user.service';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,8 @@ import { UserService } from '../../services/user.service';
     FormsModule,
     ReactiveFormsModule,
     ToastModule,
-  ],
+    NgClass
+],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   providers: [MessageService, UserService],
@@ -36,6 +38,8 @@ export class LoginComponent {
   viewPassword = false;
   loginForm: FormGroup;
 
+  isMobile = false;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -46,6 +50,23 @@ export class LoginComponent {
       email: ['', Validators.required],
       password: ['', Validators.required],
     });
+  }
+
+  ngOnInit() {
+    this.checkScreenSize();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize() {
+    if (window.innerWidth < 790) {
+      this.isMobile = true;
+    } else {
+      this.isMobile = false;
+    }
   }
 
   onSubmit() {

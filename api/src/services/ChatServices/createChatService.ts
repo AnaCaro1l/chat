@@ -23,13 +23,10 @@ export const createChatService = async ({
   });
 
   const recipientId = recipient.id;
-  console.log(recipientId)
+  console.log(recipientId);
   const chatExists = await Chat.findOne({
-    where: { 
-      [Op.and]: [
-        {recipientId: recipientId }, {ownerId: ownerId}
-      ]
-      
+    where: {
+      [Op.and]: [{ recipientId: recipientId }, { ownerId: ownerId }],
     },
   });
 
@@ -54,7 +51,8 @@ export const createChatService = async ({
     recipientId: recipientId,
   });
 
-  io.emit('show_new_chat', chat);
+  io.to(`user_${ownerId}`).emit('show_new_chat', chat);
+  io.to(`user_${recipientId}`).emit('show_new_chat', chat);
 
   return chat;
 };
