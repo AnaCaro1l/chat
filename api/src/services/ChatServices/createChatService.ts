@@ -54,7 +54,7 @@ export const createChatService = async ({
     recipientId: recipientId,
   });
 
-  io.to(`chat_${chat.id}`).emit('show_new_chat', chat);
+  io.emit('show_new_chat', chat);
 
   return chat;
 };
