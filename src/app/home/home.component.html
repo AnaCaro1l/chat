@@ -23,7 +23,6 @@
           *ngFor="let chat of chats"
           [chatName]="chat.chatName"
           [lastMessage]="chat.lastMessage"
-          [unreadCount]="chat.unreadCount"
           (cardClick)="openChat(chat)"
           [chat]="chat"
         ></app-chat-card>
@@ -61,8 +60,8 @@
 
       <div
         class="h-full overflow-y-auto flex flex-col gap-2 py-2"
-        #messagesConteiner
-        
+        #messagesContainer
+        (scroll)="onScroll()"
       >
         <app-message
           *ngFor="let msg of messages; trackBy: trackById"

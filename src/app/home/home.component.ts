@@ -27,7 +27,7 @@ import { RegisterComponent } from '../auth/register/register.component';
 import { NewChatComponent } from './new-chat/new-chat.component';
 import { UserService } from '../services/user.service';
 import { Chat, ChatsService } from '../services/chats.service';
-import { forkJoin, map, switchMap } from 'rxjs';
+import { forkJoin, map, Subject, switchMap, takeUntil } from 'rxjs';
 import { ChatCardData } from '../models/chat-card-model';
 import { Message, MessagesService } from '../services/messages.service';
 
@@ -65,10 +65,12 @@ export class HomeComponent implements OnInit {
 
   selectedChat: ChatCardData | null = null;
 
-  @ViewChild('messagesConteiner') private messagesContainer!: ElementRef;
+  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
   private shouldScroll = false;
   isMobile = false;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private messageService: MessageService,
@@ -78,11 +80,15 @@ export class HomeComponent implements OnInit {
     private chatsService: ChatsService,
     private messagesService: MessagesService
   ) {}
-
   ngOnInit(): void {
     this.loadChats();
 
     this.checkScreenSize();
+
+    this.chatsService
+      .newChat()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((showNewChat) => this.addOrUpdateChat(showNewChat));
 
     this.messagesService.onMessage().subscribe((msg) => {
       const chat = this.chats.find((c) => c.id === msg.chatId);
@@ -100,6 +106,43 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  addOrUpdateChat(chat: Chat) {
+    const otherUserId =
+      chat.ownerId === this.getCurrentUserId()
+        ? chat.recipientId
+        : chat.ownerId;
+
+    const index = this.chats.findIndex((c) => c.id === chat.id);
+
+    const updateChat = (userName: string) => {
+      const chatData: ChatCardData = {
+        id: chat.id,
+        chatName: userName,
+        lastMessage: chat.lastMessage || 'Nenhuma mensagem ainda',
+        messages: chat.messages || [],
+      };
+
+      if (index > -1) {
+        this.chats[index] = chatData;
+      } else {
+        this.chats.unshift(chatData);
+      }
+    };
+
+    if (index > -1 && this.chats[index].chatName !== 'Desconhecido') {
+      updateChat(this.chats[index].chatName);
+    } else {
+      this.userService.showUser(otherUserId).subscribe((user: any) => {
+        updateChat(user?.user.name || 'Desconhecido');
+      });
+    }
+  }
+
+  private getCurrentUserId(): number | null {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    return currentUser.user?.id || null;
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.checkScreenSize();
@@ -108,10 +151,10 @@ export class HomeComponent implements OnInit {
   private checkScreenSize() {
     if (window.innerWidth < 760) {
       this.menuOpen = false;
-      this.isMobile = true; // no mobile, só mostra chats
+      this.isMobile = true;
     } else {
       this.menuOpen = true;
-      this.isMobile = false; // no desktop, sempre mostra os dois
+      this.isMobile = false;
     }
   }
 
@@ -121,14 +164,10 @@ export class HomeComponent implements OnInit {
   pageSize = 20;
   allLoaded = false;
 
-  ngAfterViewInit() {
-    this.loadMessages();
-  }
-
   onScroll() {
     const el = this.messagesContainer.nativeElement;
 
-    if (el.scrollHeight - el.scrollTop === el.clientHeight) {
+    if (el.scrollTop <= 5 && !this.loadingMore && !this.allLoaded) {
       this.loadMessages();
     }
   }
@@ -142,23 +181,30 @@ export class HomeComponent implements OnInit {
       .listMessages(this.selectedChat.id, this.page, this.pageSize)
       .subscribe({
         next: (res: any) => {
-          if (res.messages.length < this.pageSize) this.allLoaded = true;
+          if (res.messages.length < this.pageSize) {
+            this.allLoaded = true;
+          }
 
           const el = this.messagesContainer.nativeElement;
-          const oldHeight = el.scrollHeight;
+          const oldScrollHeight = el.scrollHeight;
 
-          this.messages = [...res.messages, ...this.messages];
+          const newMessages = res.messages;
 
-          setTimeout(() => {
-            const newHeight = el.scrollHeight;
-            el.scrollTop = newHeight - oldHeight;
-          }, 0);
+          console.log('newMessages', newMessages);
+          this.messages = [...newMessages, ...this.messages];
 
           this.page++;
           this.loadingMore = false;
+
+          setTimeout(() => {
+            const newScrollHeight = el.scrollHeight;
+            const scrollDifference = newScrollHeight - oldScrollHeight;
+            el.scrollTop = scrollDifference;
+          });
         },
         error: () => {
           this.loadingMore = false;
+          console.error('Erro ao carregar mensagens');
         },
       });
   }
@@ -229,28 +275,34 @@ export class HomeComponent implements OnInit {
       return;
     }
     if (this.selectedChat && this.selectedChat.id !== chat.id) {
-      this.messagesService.leaveChat(this.selectedChat.id);
+      this.chatsService.leaveChat(this.selectedChat.id);
     }
     this.selectedChat = chat;
     this.chatOpen = true;
     this.messages = [];
+    this.page = 0;
+    this.allLoaded = false;
 
-    this.messagesService.joinChat(chat.id);
+    this.chatsService.joinChat(chat.id);
 
     history.replaceState(null, '', `/home/chat/${chat.id}`);
 
-    this.messagesService.listMessages(chat.id).subscribe({
-      next: (res: any) => {
-        this.messages = res.messages;
-        this.shouldScroll = true;
-      },
-      error: (err) => console.error('Erro ao carregar mensagens do chat', err),
-    });
+    this.messagesService
+      .listMessages(this.selectedChat.id, this.page, this.pageSize)
+      .subscribe({
+        next: (res: any) => {
+          this.messages = res.messages;
+          this.shouldScroll = true;
+        },
+        error: () => {
+          console.error('Erro ao carregar mensagens iniciais');
+        },
+      });
   }
 
   closeChat() {
     if (this.selectedChat) {
-      this.messagesService.leaveChat(this.selectedChat.id);
+      this.chatsService.leaveChat(this.selectedChat.id);
     }
     this.chatOpen = false;
     this.router.navigate(['/home']);
@@ -313,7 +365,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngAfterViewChecked() {
-    if (this.shouldScroll) {
+    if (this.shouldScroll && !this.loadingMore) {
       this.scrollToBottom();
       this.shouldScroll = false;
     }

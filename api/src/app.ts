@@ -56,6 +56,11 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   console.log('Um usuário conectou');
+  
+  socket.on('register_user', (userId: number) => {
+    console.log(`Usuário ${userId} registrado no socket ${socket.id}`);
+    socket.join(`user_${userId}`);
+  });
 
   socket.on('leave_chat', (chatId: number) => {
     socket.leave(`chat_${chatId}`);
