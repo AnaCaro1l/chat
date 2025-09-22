@@ -14,7 +14,7 @@ export class User extends Model<User> {
   name: string;
 
   @Unique
-  @Column(DataType.STRING(40))
+  @Column(DataType.STRING(100))
   email: string;
 
   @Column(DataType.VIRTUAL)
