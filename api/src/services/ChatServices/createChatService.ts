@@ -3,6 +3,7 @@ import { AppError } from '../../errors/AppError';
 import { Chat } from '../../models/Chat';
 import { User } from '../../models/User';
 import { ChatSchema } from './schemas';
+import io from '../../app';
 
 interface Request {
   ownerId: number;
@@ -52,6 +53,8 @@ export const createChatService = async ({
     ownerId: ownerId,
     recipientId: recipientId,
   });
+
+  io.to(`chat_${chat.id}`).emit('show_new_chat', chat);
 
   return chat;
 };
