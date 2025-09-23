@@ -1,4 +1,4 @@
-import { BelongsTo, Column, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, Default, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { User } from "./User";
 import { Message } from "./Message";
 
@@ -13,6 +13,7 @@ export class Chat extends Model<Chat> {
     @Column
     recipientId: number;
 
+    @Default('')
     @Column
     lastMessage: string
 

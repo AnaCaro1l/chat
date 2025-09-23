@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import {
   LucideAngularModule,
   MessageCircle,
@@ -33,6 +33,7 @@ export class MessageInputComponent {
 
   @Output() messageSent = new EventEmitter<string>();
 
+  @ViewChild('textarea') textarea!: ElementRef;
   constructor(private formBuilder: FormBuilder) {
     this.newMessageForm = this.formBuilder.group({
       message: ['', Validators.required],
@@ -47,6 +48,12 @@ export class MessageInputComponent {
 
       this.newMessageForm.reset();
     }
+  }
+
+  onInput(): void {
+    const nativeElement = this.textarea.nativeElement;
+    nativeElement.style.height = 'auto'; 
+    nativeElement.style.height = `${nativeElement.scrollHeight}px`;
   }
 
   sendMessageOnEnter(event: KeyboardEvent) {

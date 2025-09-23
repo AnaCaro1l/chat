@@ -15,7 +15,7 @@ import {
   MessageCirclePlus,
   MessageCircleX,
   Menu,
-  PencilLine
+  PencilLine,
 } from 'lucide-angular';
 import { ChatCardComponent } from '../components/chat-card/chat-card.component';
 import { MessageComponent } from '../components/message/message.component';
@@ -192,6 +192,7 @@ export class HomeComponent implements OnInit {
 
     this.messagesService
       .listMessages(this.selectedChat.id, this.page, this.pageSize)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
           if (res.messages.length < this.pageSize) {
@@ -200,7 +201,15 @@ export class HomeComponent implements OnInit {
 
           const newMessages = res.messages;
 
-          this.messages = [...newMessages, ...this.messages];
+          const existingMessageIds = new Set(
+            this.messages.map((msg) => msg.id)
+          );
+
+          const uniqueNewMessages = newMessages.filter(
+            (msg: Message) => !existingMessageIds.has(msg.id)
+          );
+
+          this.messages = [...uniqueNewMessages, ...this.messages];
 
           this.page++;
           this.loadingMore = false;

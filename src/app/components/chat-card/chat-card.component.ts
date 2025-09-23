@@ -7,7 +7,7 @@ import { ChatCardData } from '../../models/chat-card-model';
 
 @Component({
   selector: 'app-chat-card',
-  imports: [LucideAngularModule, BadgeModule, OverlayBadgeModule, NgIf],
+  imports: [LucideAngularModule, BadgeModule, OverlayBadgeModule],
   templateUrl: './chat-card.component.html',
   styleUrl: './chat-card.component.scss',
   standalone: true,
@@ -16,8 +16,6 @@ import { ChatCardData } from '../../models/chat-card-model';
 export class ChatCardComponent {
   @Input() chatName!: string;
   @Input() lastMessage!: string;
-  @Input() unreadCount: number = 0;
-
   @Input() chat!: ChatCardData;
   @Output() cardClick = new EventEmitter<ChatCardData>();
 
