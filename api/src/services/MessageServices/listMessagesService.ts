@@ -10,7 +10,7 @@ export const listMessagesService = async ({
   chatId,
   userId,
   page = 0,
-  pageSize = 20
+  pageSize = 20,
 }: Request): Promise<Message[]> => {
   const offset = page * pageSize;
   const messages = await Message.findAll({
@@ -26,7 +26,7 @@ export const listMessagesService = async ({
     message.setDataValue('fromMe', message.fromUser === userId);
   }
 
-  messages.reverse()
+  messages.reverse();
 
   return messages;
 };

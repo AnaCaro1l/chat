@@ -37,5 +37,4 @@ export const deleteMessageService = async (id): Promise<void> => {
     chatId: chat.id,
     body: chat.lastMessage,
   });
-  
 };

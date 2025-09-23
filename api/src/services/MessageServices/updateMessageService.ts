@@ -41,7 +41,6 @@ export const updateMessageService = async ({
     chatId: chat.id,
     body: chat.lastMessage,
   });
-  
 
   const updatedMessage = await message.update({
     body: body ? body : message.body,

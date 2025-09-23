@@ -42,6 +42,6 @@ export const createMessageService = async ({
     chatId: chatId,
     body: chat.lastMessage,
   });
-  
+
   return message;
 };

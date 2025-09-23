@@ -26,7 +26,8 @@ export const createChatService = async ({
   console.log(recipientId);
   const chatExists = await Chat.findOne({
     where: {
-      [Op.and]: [{ recipientId: recipientId }, { ownerId: ownerId }],
+      recipientId: recipientId,
+      ownerId: ownerId
     },
   });
 
