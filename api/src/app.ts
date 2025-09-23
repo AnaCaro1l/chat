@@ -1,16 +1,16 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import userRoutes from './routes/UserRoutes';
-import chatRoutes from './routes/ChatRoutes';
-import messageRoutes from './routes/MessageRoutes';
 import { sequelize } from './database';
 import { ValidationError } from 'yup';
 import { AppError } from './errors/AppError';
 import http from 'http';
 import { Server } from 'socket.io';
+import routes from './appRoutes';
 
 const app = express();
 const port = 3333;
+
+app.use(routes);
 
 app.use(
   cors({
@@ -20,10 +20,6 @@ app.use(
   })
 );
 app.use(express.json());
-
-app.use('/', userRoutes);
-app.use('/', chatRoutes);
-app.use('/', messageRoutes);
 
 app.use((err: Error, req: Request, res: Response, _: NextFunction) => {
   if (err instanceof ValidationError) {
