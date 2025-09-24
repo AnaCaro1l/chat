@@ -31,6 +31,7 @@ import { Chat, ChatsService } from '../services/chats.service';
 import { forkJoin, map, Subject, switchMap, takeUntil } from 'rxjs';
 import { ChatCardData } from '../models/chat-card-model';
 import { Message, MessagesService } from '../services/messages.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -80,7 +81,8 @@ export class HomeComponent implements OnInit {
     private dialog: MatDialog,
     private userService: UserService,
     private chatsService: ChatsService,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
+    private authService: AuthService
   ) {}
   ngOnInit(): void {
     this.loadChats();
@@ -117,6 +119,8 @@ export class HomeComponent implements OnInit {
   }
 
   addOrUpdateChat(chat: Chat) {
+    this.loadingChats = false;
+
     const otherUserId =
       chat.ownerId === this.getCurrentUserId()
         ? chat.recipientId
@@ -277,6 +281,7 @@ export class HomeComponent implements OnInit {
   }
 
   logout() {
+    this.authService.disconnect();
     localStorage.setItem('auth', 'false');
     localStorage.removeItem('currentUser');
     this.router.navigate(['/login']);

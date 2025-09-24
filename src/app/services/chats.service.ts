@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
+import { AuthService } from './auth.service';
 
 export interface Chat {
   id: number;
@@ -18,18 +19,15 @@ export interface Chat {
 })
 export class ChatsService {
   private apiUrl = 'http://localhost:3333';
-  private socket: Socket;
   private showNewChat = new Subject<Chat>();
 
-  constructor(private http: HttpClient) {
-    this.socket = io(this.apiUrl);
-
+  constructor(private http: HttpClient, private authService: AuthService) {
     const userId = this.getCurrentUserId();
     if (userId) {
-      this.socket.emit('register_user', userId);
+      this.authService.socket!.emit('register_user', userId);
     }
 
-    this.socket.on('show_new_chat', (showNewChat: Chat) => {
+    this.authService.socket!.on('show_new_chat', (showNewChat: Chat) => {
       this.showNewChat.next(showNewChat);
     });
   }
@@ -40,11 +38,11 @@ export class ChatsService {
   }
 
   joinChat(chatId: number) {
-    this.socket.emit('join_chat', chatId);
+    this.authService.socket!.emit('join_chat', chatId);
   }
 
   leaveChat(chatId: number) {
-    this.socket.emit('leave_chat', chatId);
+    this.authService.socket!.emit('leave_chat', chatId);
   }
 
   newChat(): Observable<Chat> {
