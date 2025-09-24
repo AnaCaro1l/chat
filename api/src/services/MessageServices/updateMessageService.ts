@@ -29,11 +29,11 @@ export const updateMessageService = async ({
 
   if (
     (chat.lastMessage === message.body ||
-      chat.lastMessage === message.body.substring(0, 25) + '...') &&
+      chat.lastMessage === message.body.substring(0, 30) + '...') &&
     message.fromUser === userId
   ) {
     await chat.update({
-      lastMessage: body.length > 25 ? body.substring(0, 25) + '...' : body,
+      lastMessage: body.length > 30 ? body.substring(0, 30) + '...' : body,
     });
   }
 

@@ -26,7 +26,7 @@ export const createMessageService = async ({
   }
 
   await chat.update({
-    lastMessage: body.length > 25 ? body.substring(0, 25) + '...' : body,
+    lastMessage: body.length > 30 ? body.substring(0, 30) + '...' : body,
   });
 
   const message = await Message.create({
