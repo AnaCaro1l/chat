@@ -12,7 +12,7 @@ export const deleteMessageService = async (id): Promise<void> => {
   if (!message) {
     throw new AppError('Mensagem não encontrada');
   }
-
+  
   await message.destroy();
 
   if (
