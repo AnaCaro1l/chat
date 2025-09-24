@@ -27,9 +27,17 @@ export class ChatsService {
       this.authService.socket!.emit('register_user', userId);
     }
 
-    this.authService.socket!.on('show_new_chat', (showNewChat: Chat) => {
-      this.showNewChat.next(showNewChat);
-    });
+    this.authService.socket!.on(
+      'show_new_chat',
+      (showNewChat: Partial<Chat>) => {
+        const chatWithOwner: Chat = {
+          ...showNewChat,
+          ownerId: this.getCurrentUserId()!, 
+        } as Chat;
+
+        this.showNewChat.next(chatWithOwner);
+      }
+    );
   }
 
   private getCurrentUserId(): number | null {
