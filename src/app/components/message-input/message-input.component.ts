@@ -47,6 +47,11 @@ export class MessageInputComponent {
       this.messageSent.emit(message);
 
       this.newMessageForm.reset();
+
+      if(this.textarea) {
+        const nativeElement = this.textarea.nativeElement;
+        nativeElement.style.height = 'auto'
+      }
     }
   }
 

@@ -6,7 +6,7 @@ import { Message } from '../../models/Message';
 export const deleteMessageService = async (id): Promise<void> => {
   const message = await Message.findByPk(id);
   const chat = await Chat.findOne({
-    where: { id: message.chatId },
+    where: { id: message?.chatId },
   });
 
   if (!message) {
@@ -17,24 +17,29 @@ export const deleteMessageService = async (id): Promise<void> => {
 
   if (
     chat.lastMessage === message.body ||
-    chat.lastMessage === message.body.substring(0, 25) + '...'
+    chat.lastMessage === message.body.substring(0, 30) + '...'
   ) {
     const lastMessage = await Message.findOne({
       where: { chatId: chat.id },
       order: [['createdAt', 'DESC']],
     });
 
-    if (lastMessage.body.length > 25) {
-      lastMessage.body = lastMessage.body.substring(0, 25) + '...';
+    let newLastMessage = 'Nenhuma mensagem ainda...';
+
+    if (lastMessage) {
+      newLastMessage =
+        lastMessage.body.length > 30
+          ? lastMessage.body.substring(0, 30) + '...'
+          : lastMessage.body;
     }
 
     await chat.update({
-      lastMessage: lastMessage ? lastMessage.body : '',
+      lastMessage: newLastMessage,
+    });
+
+    io.to(`chat_${chat.id}`).emit('last_message', {
+      chatId: chat.id,
+      body: newLastMessage,
     });
   }
-
-  io.to(`chat_${chat.id}`).emit('last_message', {
-    chatId: chat.id,
-    body: chat.lastMessage,
-  });
 };

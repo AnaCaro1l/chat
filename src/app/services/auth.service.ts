@@ -9,7 +9,6 @@ export class AuthService {
   private apiUrl = environment.apiUrl;
    socket: Socket | null = null;
   constructor() {
-    console.log(1)
     this.socket = io(this.apiUrl, {});
 
     this.socket.on('connect', () => {
@@ -26,11 +25,8 @@ export class AuthService {
   }
 
   disconnect() {
-    console.log(1);
     console.log(this.socket)
     if (this.socket) {
-      console.log(1);
-
       this.socket.disconnect()
     }
   }
