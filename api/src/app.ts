@@ -10,8 +10,6 @@ import routes from './appRoutes';
 const app = express();
 const port = 3333;
 
-app.use(routes);
-
 app.use(
   cors({
     origin: 'http://localhost:4200',
@@ -20,6 +18,8 @@ app.use(
   })
 );
 app.use(express.json());
+
+app.use(routes);
 
 app.use((err: Error, req: Request, res: Response, _: NextFunction) => {
   if (err instanceof ValidationError) {
@@ -67,6 +67,10 @@ io.on('connection', (socket) => {
     socket.join(`chat_${chatId}`);
     console.log(`Socket ${socket.id} entrou na sala chat_${chatId}`);
   });
+
+  socket.on('disconnect', () => {
+    console.log('Um usuário desconectou');
+  })
 });
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));
