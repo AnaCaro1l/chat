@@ -6,7 +6,7 @@ import { DataType } from "sequelize-typescript";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface: QueryInterface) {
-    queryInterface.changeColumn('chats', 'lastMessage', {
+    queryInterface.changeColumn('Chats', 'lastMessage', {
       type: DataType.TEXT,
       defaultValue: "",
       allowNull: false
@@ -14,7 +14,7 @@ module.exports = {
   },
 
   async down (queryInterface: QueryInterface) {
-    queryInterface.changeColumn('chats', 'lastMessage', {
+    queryInterface.changeColumn('Chats', 'lastMessage', {
       type: DataType.STRING,
       allowNull: true
     })
