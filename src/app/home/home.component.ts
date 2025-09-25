@@ -85,6 +85,8 @@ export class HomeComponent implements OnInit {
     private authService: AuthService
   ) {}
   ngOnInit(): void {
+    this.authService.socket?.connect();
+
     this.loadChats();
 
     this.checkScreenSize();
@@ -246,9 +248,7 @@ export class HomeComponent implements OnInit {
 
           const chatsWithNames$ = chatsArray.map((chat: Chat) => {
             const otherUserId =
-              chat.ownerId === currentUser
-                ? chat.recipientId
-                : chat.ownerId;
+              chat.ownerId === currentUser ? chat.recipientId : chat.ownerId;
             return this.userService.showUser(otherUserId).pipe(
               map((user: any) => {
                 return {
