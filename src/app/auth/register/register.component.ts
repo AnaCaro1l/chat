@@ -1,4 +1,4 @@
-import { NgClass, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, HostListener, Inject, OnInit, Optional } from '@angular/core';
 import {
   FormBuilder,
@@ -23,8 +23,7 @@ import { UserService } from '../../services/user.service';
     RouterLink,
     ToastModule,
     ReactiveFormsModule,
-    NgIf,
-    NgClass,
+    CommonModule
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],

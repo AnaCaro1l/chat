@@ -1,14 +1,21 @@
 <p-toast />
 <div class="justify-center items-center flex h-screen">
   <div
-  [ngClass]="{'w-full': isMobile }"
-    class="w-[30vw] bg-[#171717] flex flex-col justify-center gap-15 rounded-lg p-8"
+    [ngClass]="{ 'w-full': isMobile }"
+    class="w-[30vw] bg-[#171717] flex flex-col justify-center gap-10 rounded-lg p-8"
   >
     <div class="flex flex-col gap-5 items-center">
-      <h2 *ngIf="!isEditMode" class="text-4xl text-white font-bold">Cadastre-se</h2>
-      <h2 *ngIf="isEditMode" class="text-4xl text-white font-bold">Editar Perfil</h2>
+      <h2 *ngIf="!isEditMode" class="text-4xl text-white font-bold">
+        Cadastre-se
+      </h2>
+      <h2 *ngIf="isEditMode" class="text-4xl text-white font-bold">
+        Editar Perfil
+      </h2>
       <div class="flex flex-col gap-2 w-full">
-        <div *ngIf="!isEditMode" class="text-center text-lg font-medium text-white leading-tight">
+        <div
+          *ngIf="!isEditMode"
+          class="text-center text-lg font-medium text-white leading-tight"
+        >
           Bem vindo!
         </div>
         <div *ngIf="!isEditMode" class="text-center">
@@ -27,56 +34,121 @@
       (ngSubmit)="onSubmit()"
       class="flex flex-col gap-4"
     >
-      <div class="flex gap-2 items-center">
-        <input
-          formControlName="email"
-          type="email"
-          placeholder="Email"
-          class="p-2 rounded-lg bg-[#222222] text-white w-full"
-        />
-        <lucide-angular [img]="mail" color="#1A6B68" size="24"></lucide-angular>
+      <div class="flex flex-col gap-1">
+        <div class="flex gap-2 items-center w-full">
+          <input
+            formControlName="email"
+            type="email"
+            placeholder="Email"
+            class="p-2 rounded-lg bg-[#222222] text-white w-full placeholder:!text-white/40"
+          />
+          <lucide-angular
+            [img]="mail"
+            color="#1A6B68"
+            size="24"
+          ></lucide-angular>
+        </div>
+        <div
+          *ngIf="
+            registerForm.get('email')?.invalid &&
+            registerForm.get('email')?.touched
+          "
+          class="erro"
+        >
+          Insira um email válido
+        </div>
       </div>
-      <div class="flex gap-2 items-center">
-        <input
-          formControlName="username"
-          type="text"
-          placeholder="Usuário"
-          class="p-2 rounded-lg bg-[#222222] text-white w-full"
-        />
-        <lucide-angular [img]="user" color="#1A6B68" size="24"></lucide-angular>
+      <div class="flex flex-col gap-1">
+        <div class="flex gap-2 items-center">
+          <input
+            formControlName="username"
+            type="text"
+            placeholder="Usuário"
+            class="p-2 rounded-lg bg-[#222222] text-white w-full placeholder:!text-white/40"
+          />
+          <lucide-angular
+            [img]="user"
+            color="#1A6B68"
+            size="24"
+          ></lucide-angular>
+        </div>
+        <div
+          *ngIf="
+            registerForm.get('username')?.invalid &&
+            registerForm.get('username')?.touched
+          "
+          class="erro"
+        >
+          Campo obrigatório
+        </div>
       </div>
-      <div class="flex gap-2 items-center">
-        <input
-          formControlName="password"
-          [type]="viewPassword ? 'text' : 'password'"
-          placeholder="Senha"
-          class="p-2 rounded-lg bg-[#222222] text-white w-full"
-        />
-        <lucide-angular
-          [img]="viewPassword ? Eye : EyeOff"
-          color="#1A6B68"
-          size="24"
-          class="cursor-pointer"
-          (click)="togglePasswordVisibility()"
-        ></lucide-angular>
+      <div class="flex flex-col gap-1">
+        <div class="flex gap-2 items-center">
+          <input
+            formControlName="password"
+            [type]="viewPassword ? 'text' : 'password'"
+            placeholder="Senha"
+            class="p-2 rounded-lg bg-[#222222] text-white w-full placeholder:!text-white/40"
+          />
+          <lucide-angular
+            [img]="viewPassword ? Eye : EyeOff"
+            color="#1A6B68"
+            size="24"
+            class="cursor-pointer"
+            (click)="togglePasswordVisibility()"
+          ></lucide-angular>
+        </div>
+        <div
+          *ngIf="
+            registerForm.get('password')?.invalid &&
+            registerForm.get('password')?.touched
+          "
+          class="erro"
+        >
+          Campo obrigatório
+        </div>
       </div>
-      <div class="flex gap-2 items-center">
-        <input
-          formControlName="confirmPassword"
-          [type]="viewPasswordConfirm ? 'text' : 'password'"
-          placeholder="Confirme sua senha"
-          class="p-2 rounded-lg bg-[#222222] text-white w-full"
-        />
-        <lucide-angular
-          [img]="viewPasswordConfirm ? Eye : EyeOff"
-          color="#1A6B68"
-          size="24"
-          class="cursor-pointer"
-          (click)="togglePasswordConfirmVisibility()"
-        ></lucide-angular>
+      <div class="flex flex-col gap-1">
+        <div class="flex gap-2 items-center">
+          <input
+            formControlName="confirmPassword"
+            [type]="viewPasswordConfirm ? 'text' : 'password'"
+            placeholder="Confirme sua senha"
+            class="p-2 rounded-lg bg-[#222222] text-white w-full placeholder:!text-white/40"
+          />
+          <lucide-angular
+            [img]="viewPasswordConfirm ? Eye : EyeOff"
+            color="#1A6B68"
+            size="24"
+            class="cursor-pointer"
+            (click)="togglePasswordConfirmVisibility()"
+          ></lucide-angular>
+        </div>
+        <div
+          *ngIf="
+            registerForm.get('password')?.value !==
+            registerForm.get('confirmPassword')?.value
+          "
+          class="erro"
+        >
+          As senhas não coincidem
+        </div>
+        <div
+          *ngIf="
+            registerForm.get('confirmPassword')?.invalid &&
+            registerForm.get('confirmPassword')?.touched
+          "
+          class="erro"
+        >
+          Campo obrigatório
+        </div>
       </div>
-      <button type="submit" class="bg-[#1A6B68] text-white p-2 rounded-lg">
-        {{ isEditMode ? 'Salvar' : 'Cadastrar' }}
+      <button
+        type="submit"
+        class="bg-[#1A6B68] hover:bg-[#218f8b] cursor-pointer text-white p-2 rounded-lg"
+        [disabled]="registerForm.invalid"
+      >
+        {{ isEditMode ? "Salvar" : "Cadastrar" }}
       </button>
     </form>
   </div>

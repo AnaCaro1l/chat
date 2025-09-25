@@ -12,7 +12,7 @@ import {
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { UserService } from '../../services/user.service';
-import { NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +24,7 @@ import { NgClass } from '@angular/common';
     FormsModule,
     ReactiveFormsModule,
     ToastModule,
-    NgClass
+    CommonModule
 ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],

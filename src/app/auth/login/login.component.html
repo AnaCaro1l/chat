@@ -1,7 +1,7 @@
 <p-toast />
 <div class="justify-center items-center flex h-screen">
   <div
-  [ngClass]="{'w-full': isMobile }"
+    [ngClass]="{ 'w-full': isMobile }"
     class="w-[30vw] h-[70vh] bg-[#171717] flex flex-col justify-center gap-15 rounded-lg p-8"
   >
     <div class="flex flex-col gap-5 items-center">
@@ -11,7 +11,9 @@
           Bem vindo de volta!
         </div>
         <div class="text-center">
-          <span class="text-white/80 text-sm">Ainda não possui uma conta? </span>
+          <span class="text-white/80 text-sm"
+            >Ainda não possui uma conta?
+          </span>
           <a
             [routerLink]="'/register'"
             class="text-white/80 cursor-pointer hover:text-white/90 underline"
@@ -21,32 +23,69 @@
       </div>
     </div>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
-      <div class="flex gap-2 items-center">
-        <input
-          formControlName="email"
-          type="email"
-          placeholder="Email"
-          class="p-2 rounded-lg bg-[#222222] text-white w-full"
-        />
-        <lucide-angular [img]="user" color="#1A6B68" size="24"></lucide-angular>
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"
+      class="flex flex-col gap-4"
+    >
+      <div class="flex flex-col gap-1">
+        <div class="flex gap-2 items-center">
+          <input
+            formControlName="email"
+            type="email"
+            placeholder="Email"
+            class="p-2 rounded-lg bg-[#222222] text-white w-full placeholder:!text-white/40"
+          />
+          <lucide-angular
+            [img]="user"
+            color="#1A6B68"
+            size="24"
+          ></lucide-angular>
+        </div>
+        <div
+          *ngIf="
+            loginForm.get('email')?.invalid &&
+            loginForm.get('email')?.touched
+          "
+          class="erro"
+        >
+          Campo obrigatório
+        </div>
       </div>
-      <div class="flex gap-2 items-center">
-        <input
-          formControlName="password"
-          [type]="viewPassword ? 'text' : 'password'"
-          placeholder="Senha"
-          class="p-2 rounded-lg bg-[#222222] text-white w-full"
-        />
-        <lucide-angular
-          [img]="viewPassword ? Eye : EyeOff"
-          color="#1A6B68"
-          size="24"
-          class="cursor-pointer"
-          (click)="togglePasswordVisibility()"
-        ></lucide-angular>
+
+      <div class="flex flex-col gap-1">
+        <div class="flex gap-2 items-center">
+          <input
+            formControlName="password"
+            [type]="viewPassword ? 'text' : 'password'"
+            placeholder="Senha"
+            class="p-2 rounded-lg bg-[#222222] text-white w-full placeholder:!text-white/40"
+          />
+          <lucide-angular
+            [img]="viewPassword ? Eye : EyeOff"
+            color="#1A6B68"
+            size="24"
+            class="cursor-pointer"
+            (click)="togglePasswordVisibility()"
+          ></lucide-angular>
+        </div>
+        <div
+          *ngIf="
+            loginForm.get('password')?.invalid &&
+            loginForm.get('password')?.touched
+          "
+          class="erro"
+        >
+          Campo obrigatório
+        </div>
       </div>
-      <button type="submit" class="bg-[#1A6B68] cursor-pointer text-white p-2 rounded-lg">Entrar</button>
+      <button
+        type="submit"
+        class="bg-[#1A6B68] hover:bg-[#218f8b] cursor-pointer text-white p-2 rounded-lg"
+        [disabled]="loginForm.invalid"
+      >
+        Entrar
+      </button>
     </form>
   </div>
 </div>
