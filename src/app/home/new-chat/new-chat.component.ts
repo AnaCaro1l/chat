@@ -1,19 +1,30 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ChatsService } from '../../services/chats.service';
 import { DialogRef } from '@angular/cdk/dialog';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-new-chat',
   imports: [ReactiveFormsModule],
   templateUrl: './new-chat.component.html',
   styleUrl: './new-chat.component.scss',
-  providers: [ChatsService]
+  providers: [ChatsService],
 })
 export class NewChatComponent {
   newChatForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private chatsService: ChatsService, private dialogRef: DialogRef) {
+  constructor(
+    private fb: FormBuilder,
+    private chatsService: ChatsService,
+    private dialogRef: DialogRef,
+    private messageService: MessageService
+  ) {
     this.newChatForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
     });
@@ -22,8 +33,9 @@ export class NewChatComponent {
   createNewChat() {
     if (this.newChatForm.valid) {
       const email = this.newChatForm.value.email;
-      
-      const ownerId = JSON.parse(localStorage.getItem('currentUser') || '{}').user.id;
+
+      const ownerId = JSON.parse(localStorage.getItem('currentUser') || '{}')
+        .user.id;
       if (!ownerId) {
         console.error('Owner ID not found in local storage.');
         return;
@@ -33,12 +45,24 @@ export class NewChatComponent {
         next: (chat) => {
           console.log('Chat created successfully:', chat);
           this.dialogRef.close();
+          this.messageService.add({
+            severity: 'sucesss',
+            summary: 'sucess',
+            detail:'Chat criado com sucesso',
+            life: 3000,
+          });
         },
         error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: err.error.message || 'Erro ao criar chat',
+            life: 3000,
+          });
           console.error('Error creating chat:', err);
           console.log('Owner ID:', ownerId, 'Email:', email);
-        }
-      })
+        },
+      });
     }
   }
 }
