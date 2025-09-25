@@ -119,8 +119,6 @@ export class HomeComponent implements OnInit {
   }
 
   addOrUpdateChat(chat: Chat) {
-    this.loadingChats = false;
-
     const otherUserId =
       chat.ownerId === this.getCurrentUserId()
         ? chat.recipientId
@@ -132,7 +130,7 @@ export class HomeComponent implements OnInit {
       const chatData: ChatCardData = {
         id: chat.id,
         chatName: userName,
-        lastMessage: chat.lastMessage || 'Nenhuma mensagem ainda',
+        lastMessage: chat.lastMessage || 'Nenhuma mensagem ainda...',
         messages: chat.messages || [],
       };
 
@@ -233,22 +231,22 @@ export class HomeComponent implements OnInit {
   }
 
   loadChats() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const currentUser = this.getCurrentUserId();
 
-    if (!currentUser.user?.id) {
+    if (!currentUser) {
       console.error('Usuário não possui id');
       return;
     }
 
     this.chatsService
-      .getChats(currentUser.user.id)
+      .getChats(currentUser)
       .pipe(
         switchMap((response: any) => {
           const chatsArray = response.chats;
 
           const chatsWithNames$ = chatsArray.map((chat: Chat) => {
             const otherUserId =
-              chat.ownerId === currentUser.user.id
+              chat.ownerId === currentUser
                 ? chat.recipientId
                 : chat.ownerId;
             return this.userService.showUser(otherUserId).pipe(
@@ -256,7 +254,7 @@ export class HomeComponent implements OnInit {
                 return {
                   id: chat.id,
                   chatName: user?.user.name || 'Desconhecido',
-                  lastMessage: chat.lastMessage || 'Nenhuma mensagem ainda',
+                  lastMessage: chat.lastMessage || 'Nenhuma mensagem ainda...',
                   unreadCount:
                     chat.messages?.filter((msg: any) => !msg.read).length || 0,
                   messages: chat.messages || [],
@@ -293,8 +291,8 @@ export class HomeComponent implements OnInit {
   }
 
   openChat(chat: ChatCardData) {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (!currentUser.user?.id) {
+    const currentUser = this.getCurrentUserId();
+    if (!currentUser) {
       console.error('Usuário não possui id');
       return;
     }
@@ -332,14 +330,14 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/home']);
   }
   openProfile() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const currentUser = this.getCurrentUserId();
 
-    if (!currentUser.user?.id) {
+    if (!currentUser) {
       console.error('Usuário não possui id');
       return;
     }
 
-    this.userService.showUser(currentUser.user.id).subscribe({
+    this.userService.showUser(currentUser).subscribe({
       next: (user) => {
         const dialogConfig: any = {
           height: '90vh',
