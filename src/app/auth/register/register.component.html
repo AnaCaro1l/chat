@@ -145,7 +145,8 @@
       </div>
       <button
         type="submit"
-        class="bg-[#1A6B68] hover:bg-[#218f8b] cursor-pointer text-white p-2 rounded-lg"
+        class="bg-[#1A6B68] text-white p-2 rounded-lg"
+        [ngClass]="{'hover:bg-[#218f8b] cursor-pointer': !registerForm.invalid}"
         [disabled]="registerForm.invalid"
       >
         {{ isEditMode ? "Salvar" : "Cadastrar" }}
