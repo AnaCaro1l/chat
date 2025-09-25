@@ -91,6 +91,8 @@ export class HomeComponent implements OnInit {
 
     this.checkScreenSize();
 
+    this.authService.socket?.connect();
+
     this.chatsService
       .newChat()
       .pipe(takeUntil(this.destroy$))
