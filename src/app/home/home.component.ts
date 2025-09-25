@@ -293,6 +293,10 @@ export class HomeComponent implements OnInit {
   }
 
   openChat(chat: ChatCardData) {
+    if (this.selectedChat?.id === chat.id) {
+      this.chatOpen = true;
+      return;
+    }
     const currentUser = this.getCurrentUserId();
     if (!currentUser) {
       console.error('Usuário não possui id');
@@ -302,7 +306,7 @@ export class HomeComponent implements OnInit {
       this.messagesService.leaveChat(this.selectedChat.id);
     }
     this.selectedChat = chat;
-    this.messagesService.joinChat(chat.id);
+    this.chatsService.joinChat(chat.id);
 
     this.chatOpen = true;
     this.messages = [];
