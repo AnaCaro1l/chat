@@ -4,11 +4,11 @@ import { DataTypes, QueryInterface } from "sequelize";
 
 module.exports = {
   async up (queryInterface: QueryInterface) {
-    return queryInterface.removeColumn('messages', 'fromMe')
+    return queryInterface.removeColumn('Messages', 'fromMe')
   },
 
   async down (queryInterface: QueryInterface) {
-    return queryInterface.addColumn('messages', 'fromMe', {
+    return queryInterface.addColumn('Messages', 'fromMe', {
       type: DataTypes.BOOLEAN,
       allowNull: true
     })
